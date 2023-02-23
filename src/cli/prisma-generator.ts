@@ -48,6 +48,7 @@ export async function generate(options: GeneratorOptions) {
     ),
     customPrismaImportPath: generatorConfig.customPrismaImportPath,
     contextPrismaKey: generatorConfig.contextPrismaKey,
+    useFederation: parseStringBoolean(generatorConfig.useFederation),
   };
   const internalConfig: InternalGeneratorOptions = {
     outputDirPath: outputDir,

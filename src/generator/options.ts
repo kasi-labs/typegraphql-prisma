@@ -12,6 +12,7 @@ export interface ExternalGeneratorOptions {
   customPrismaImportPath?: string;
   contextPrismaKey?: string;
   useSimpleInputs?: boolean;
+  useFederation?: boolean;
 }
 
 export interface InternalGeneratorOptions {
