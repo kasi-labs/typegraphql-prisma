@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../scalars";
 import { MainUser } from "../models/MainUser";
 import { PostKind } from "../enums/PostKind";
 
-@TypeGraphQL.ObjectType("Post", {
-  isAbstract: true
-})
+@TypeGraphQL.ObjectType("Post", {})
 export class Post {
   /**
    * first line of comment
@@ -30,9 +28,6 @@ export class Post {
   })
   updatedAt!: Date;
 
-  @TypeGraphQL.Field(_type => Boolean, {
-    nullable: false
-  })
   published!: boolean;
 
   @TypeGraphQL.Field(_type => String, {
@@ -67,4 +62,11 @@ export class Post {
     nullable: false
   })
   metadata!: Prisma.JsonValue;
+
+  @TypeGraphQL.Field(_type => Boolean, {
+    nullable: false
+  })
+  get isPublished(): boolean {
+    return this.published;
+  }
 }

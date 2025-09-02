@@ -11,9 +11,7 @@ import { StringFilter } from "../inputs/StringFilter";
 import { StringNullableFilter } from "../inputs/StringNullableFilter";
 import { StringNullableListFilter } from "../inputs/StringNullableListFilter";
 
-@TypeGraphQL.InputType("MainUserWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MainUserWhereInput", {})
 export class MainUserWhereInput {
   @TypeGraphQL.Field(_type => [MainUserWhereInput], {
     nullable: true
@@ -54,17 +52,10 @@ export class MainUserWhereInput {
   })
   amount?: FloatFilter | undefined;
 
-  posts?: PostListRelationFilter | undefined;
-
   @TypeGraphQL.Field(_type => EnumRoleFilter, {
     nullable: true
   })
   role?: EnumRoleFilter | undefined;
-
-  @TypeGraphQL.Field(_type => PostListRelationFilter, {
-    nullable: true
-  })
-  editorPosts?: PostListRelationFilter | undefined;
 
   @TypeGraphQL.Field(_type => IntNullableListFilter, {
     nullable: true
@@ -75,6 +66,13 @@ export class MainUserWhereInput {
     nullable: true
   })
   aliases?: StringNullableListFilter | undefined;
+
+  posts?: PostListRelationFilter | undefined;
+
+  @TypeGraphQL.Field(_type => PostListRelationFilter, {
+    nullable: true
+  })
+  editorPosts?: PostListRelationFilter | undefined;
 
   @TypeGraphQL.Field(_type => StringNullableFilter, {
     nullable: true

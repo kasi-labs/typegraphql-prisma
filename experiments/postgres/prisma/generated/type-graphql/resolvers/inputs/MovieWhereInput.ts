@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../../scalars";
 import { DirectorRelationFilter } from "../inputs/DirectorRelationFilter";
 import { StringFilter } from "../inputs/StringFilter";
 
-@TypeGraphQL.InputType("MovieWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MovieWhereInput", {})
 export class MovieWhereInput {
   @TypeGraphQL.Field(_type => [MovieWhereInput], {
     nullable: true
@@ -34,13 +32,13 @@ export class MovieWhereInput {
   })
   directorLastName?: StringFilter | undefined;
 
-  @TypeGraphQL.Field(_type => DirectorRelationFilter, {
-    nullable: true
-  })
-  director?: DirectorRelationFilter | undefined;
-
   @TypeGraphQL.Field(_type => StringFilter, {
     nullable: true
   })
   title?: StringFilter | undefined;
+
+  @TypeGraphQL.Field(_type => DirectorRelationFilter, {
+    nullable: true
+  })
+  director?: DirectorRelationFilter | undefined;
 }

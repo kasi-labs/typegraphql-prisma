@@ -6,9 +6,7 @@ import { CommentListRelationFilter } from "../inputs/CommentListRelationFilter";
 import { StringFilter } from "../inputs/StringFilter";
 import { UserRelationFilter } from "../inputs/UserRelationFilter";
 
-@TypeGraphQL.InputType("PostWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("PostWhereInput", {})
 export class PostWhereInput {
   @TypeGraphQL.Field(_type => [PostWhereInput], {
     nullable: true
@@ -45,6 +43,11 @@ export class PostWhereInput {
   })
   body?: StringFilter | undefined;
 
+  @TypeGraphQL.Field(_type => StringFilter, {
+    nullable: true
+  })
+  authorId?: StringFilter | undefined;
+
   @TypeGraphQL.Field(_type => CommentListRelationFilter, {
     nullable: true
   })
@@ -54,9 +57,4 @@ export class PostWhereInput {
     nullable: true
   })
   author?: UserRelationFilter | undefined;
-
-  @TypeGraphQL.Field(_type => StringFilter, {
-    nullable: true
-  })
-  authorId?: StringFilter | undefined;
 }

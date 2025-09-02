@@ -7,7 +7,7 @@ generator client {
   provider        = "prisma-client-js"
   // binaryTargets   = ["windows", "debian-openssl-1.1.x"]
   output          = "../prisma/generated/client"
-  previewFeatures = ["orderByNulls", "fullTextSearch", "extendedWhereUnique", "filteredRelationCount", "clientExtensions"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 generator typegraphql {
@@ -19,11 +19,12 @@ generator typegraphql {
   // useOriginalMapping       = true
   useUncheckedScalarInputs = false
   emitIdAsIDType           = true
-  // emitOnly                 = "crudResolvers"
+  // emitOnly                 = ["enums", "models"]
   customPrismaImportPath   = "../client"
   contextPrismaKey         = "prismaClient"
   useSimpleInputs          = true
   emitRedundantTypesInfo   = true
+  formatGeneratedCode      = "tsc"
 }
 
 // Role enum comment
@@ -71,6 +72,7 @@ model post {
   /// @TypeGraphQL.omit(input: ["create", "update"])
   updatedAt DateTime  @updatedAt
   /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.field(name: "isPublished")
   published Boolean   @default(false)
   title     String
   /// @TypeGraphQL.omit(output: true)

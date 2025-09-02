@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../../scalars";
 import { MainUserCreateNestedOneWithoutPostsInput } from "../inputs/MainUserCreateNestedOneWithoutPostsInput";
 import { PostKind } from "../../enums/PostKind";
 
-@TypeGraphQL.InputType("PostCreateWithoutEditorInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("PostCreateWithoutEditorInput", {})
 export class PostCreateWithoutEditorInput {
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -34,11 +32,6 @@ export class PostCreateWithoutEditorInput {
   })
   content?: string | undefined;
 
-  @TypeGraphQL.Field(_type => MainUserCreateNestedOneWithoutPostsInput, {
-    nullable: false
-  })
-  author!: MainUserCreateNestedOneWithoutPostsInput;
-
   @TypeGraphQL.Field(_type => PostKind, {
     nullable: true
   })
@@ -48,4 +41,9 @@ export class PostCreateWithoutEditorInput {
     nullable: false
   })
   metadata!: Prisma.InputJsonValue;
+
+  @TypeGraphQL.Field(_type => MainUserCreateNestedOneWithoutPostsInput, {
+    nullable: false
+  })
+  author!: MainUserCreateNestedOneWithoutPostsInput;
 }

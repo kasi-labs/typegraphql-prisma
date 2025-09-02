@@ -29,10 +29,9 @@ describe("custom resolvers execution", () => {
   });
 
   it("should properly apply decorators in enhance map", async () => {
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     applyResolversEnhanceMap({
       Post: {
@@ -70,16 +69,15 @@ describe("custom resolvers execution", () => {
 
     expect(errors).toMatchInlineSnapshot(`
       Array [
-        [GraphQLError: Access denied! You need to be authorized to perform this action!],
+        [GraphQLError: Access denied! You need to be authenticated to perform this action!],
       ]
     `);
   }, 10000);
 
   it("should properly apply decorators for all methods when `_all` is used", async () => {
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     applyResolversEnhanceMap({
       Post: {
@@ -117,16 +115,81 @@ describe("custom resolvers execution", () => {
 
     expect(errors).toMatchInlineSnapshot(`
       Array [
-        [GraphQLError: Access denied! You need to be authorized to perform this action!],
+        [GraphQLError: Access denied! You need to be authenticated to perform this action!],
       ]
     `);
   }, 10000);
 
+  it("should properly apply decorators for selected crud methods when `_query` is used", async () => {
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
+
+    applyResolversEnhanceMap({
+      Post: {
+        _all: [Extensions({ all: true })],
+        _query: [Extensions({ read: true })],
+      },
+    });
+
+    const graphQLSchema = await buildSchema({
+      resolvers: [PostCrudResolver],
+      validate: false,
+      authChecker: () => false,
+    });
+
+    const postQuery = graphQLSchema.getQueryType()!.getFields().post;
+    const postsQuery = graphQLSchema.getQueryType()!.getFields().posts;
+    const createPostMutation = graphQLSchema
+      .getMutationType()!
+      .getFields().createOnePost;
+    const updatePostMutation = graphQLSchema
+      .getMutationType()!
+      .getFields().updateOnePost;
+
+    expect(postQuery.extensions).toEqual({ all: true, read: true });
+    expect(postsQuery.extensions).toEqual({ all: true, read: true });
+    expect(createPostMutation.extensions).toEqual({ all: true });
+    expect(updatePostMutation.extensions).toEqual({ all: true });
+  }, 10000);
+
+  it("should properly apply decorators for selected crud methods when `_mutation` is used", async () => {
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
+
+    applyResolversEnhanceMap({
+      Post: {
+        _all: [Extensions({ all: true })],
+        _mutation: [Extensions({ write: true })],
+      },
+    });
+
+    const graphQLSchema = await buildSchema({
+      resolvers: [PostCrudResolver],
+      validate: false,
+      authChecker: () => false,
+    });
+
+    const postQuery = graphQLSchema.getQueryType()!.getFields().post;
+    const postsQuery = graphQLSchema.getQueryType()!.getFields().posts;
+    const createPostMutation = graphQLSchema
+      .getMutationType()!
+      .getFields().createOnePost;
+    const updatePostMutation = graphQLSchema
+      .getMutationType()!
+      .getFields().updateOnePost;
+
+    expect(postQuery.extensions).toEqual({ all: true });
+    expect(postsQuery.extensions).toEqual({ all: true });
+    expect(createPostMutation.extensions).toEqual({ all: true, write: true });
+    expect(updatePostMutation.extensions).toEqual({ all: true, write: true });
+  }, 10000);
+
   it("should allow overwrite decorators when `_all` is used", async () => {
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     applyResolversEnhanceMap({
       Post: {
@@ -176,10 +239,9 @@ describe("custom resolvers execution", () => {
   }, 10000);
 
   it("should inject decorators to decorator fn when `_all` is used", async () => {
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     let injectedDecorators: Function[] | undefined;
     applyResolversEnhanceMap({
@@ -203,10 +265,9 @@ describe("custom resolvers execution", () => {
   }, 10000);
 
   it("should concat decorators when `_all` and method specific are used together", async () => {
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     applyResolversEnhanceMap({
       Post: {
@@ -231,10 +292,9 @@ describe("custom resolvers execution", () => {
 
   it("should properly apply descriptor decorators in enhance map", async () => {
     let descriptorCalledFlag = false;
-    const {
-      applyResolversEnhanceMap,
-      PostCrudResolver,
-    } = require(outputDirPath);
+    const { applyResolversEnhanceMap, PostCrudResolver } = require(
+      outputDirPath,
+    );
 
     applyResolversEnhanceMap({
       Post: {

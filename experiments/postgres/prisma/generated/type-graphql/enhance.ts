@@ -27,6 +27,7 @@ const actionResolversMap = {
   MainUser: {
     aggregateMainUser: actionResolvers.AggregateMainUserResolver,
     createManyMainUser: actionResolvers.CreateManyMainUserResolver,
+    createManyAndReturnMainUser: actionResolvers.CreateManyAndReturnMainUserResolver,
     createOneMainUser: actionResolvers.CreateOneMainUserResolver,
     deleteManyMainUser: actionResolvers.DeleteManyMainUserResolver,
     deleteOneMainUser: actionResolvers.DeleteOneMainUserResolver,
@@ -43,6 +44,7 @@ const actionResolversMap = {
   Post: {
     aggregatePost: actionResolvers.AggregatePostResolver,
     createManyPost: actionResolvers.CreateManyPostResolver,
+    createManyAndReturnPost: actionResolvers.CreateManyAndReturnPostResolver,
     createOnePost: actionResolvers.CreateOnePostResolver,
     deleteManyPost: actionResolvers.DeleteManyPostResolver,
     deleteOnePost: actionResolvers.DeleteOnePostResolver,
@@ -59,6 +61,7 @@ const actionResolversMap = {
   Category: {
     aggregateCategory: actionResolvers.AggregateCategoryResolver,
     createManyCategory: actionResolvers.CreateManyCategoryResolver,
+    createManyAndReturnCategory: actionResolvers.CreateManyAndReturnCategoryResolver,
     createOneCategory: actionResolvers.CreateOneCategoryResolver,
     deleteManyCategory: actionResolvers.DeleteManyCategoryResolver,
     deleteOneCategory: actionResolvers.DeleteOneCategoryResolver,
@@ -75,6 +78,7 @@ const actionResolversMap = {
   Patient: {
     aggregatePatient: actionResolvers.AggregatePatientResolver,
     createManyPatient: actionResolvers.CreateManyPatientResolver,
+    createManyAndReturnPatient: actionResolvers.CreateManyAndReturnPatientResolver,
     createOnePatient: actionResolvers.CreateOnePatientResolver,
     deleteManyPatient: actionResolvers.DeleteManyPatientResolver,
     deleteOnePatient: actionResolvers.DeleteOnePatientResolver,
@@ -91,6 +95,7 @@ const actionResolversMap = {
   Movie: {
     aggregateMovie: actionResolvers.AggregateMovieResolver,
     createManyMovie: actionResolvers.CreateManyMovieResolver,
+    createManyAndReturnMovie: actionResolvers.CreateManyAndReturnMovieResolver,
     createOneMovie: actionResolvers.CreateOneMovieResolver,
     deleteManyMovie: actionResolvers.DeleteManyMovieResolver,
     deleteOneMovie: actionResolvers.DeleteOneMovieResolver,
@@ -107,6 +112,7 @@ const actionResolversMap = {
   Director: {
     aggregateDirector: actionResolvers.AggregateDirectorResolver,
     createManyDirector: actionResolvers.CreateManyDirectorResolver,
+    createManyAndReturnDirector: actionResolvers.CreateManyAndReturnDirectorResolver,
     createOneDirector: actionResolvers.CreateOneDirectorResolver,
     deleteManyDirector: actionResolvers.DeleteManyDirectorResolver,
     deleteOneDirector: actionResolvers.DeleteOneDirectorResolver,
@@ -123,6 +129,7 @@ const actionResolversMap = {
   Problem: {
     aggregateProblem: actionResolvers.AggregateProblemResolver,
     createManyProblem: actionResolvers.CreateManyProblemResolver,
+    createManyAndReturnProblem: actionResolvers.CreateManyAndReturnProblemResolver,
     createOneProblem: actionResolvers.CreateOneProblemResolver,
     deleteManyProblem: actionResolvers.DeleteManyProblemResolver,
     deleteOneProblem: actionResolvers.DeleteOneProblemResolver,
@@ -139,6 +146,7 @@ const actionResolversMap = {
   Creator: {
     aggregateCreator: actionResolvers.AggregateCreatorResolver,
     createManyCreator: actionResolvers.CreateManyCreatorResolver,
+    createManyAndReturnCreator: actionResolvers.CreateManyAndReturnCreatorResolver,
     createOneCreator: actionResolvers.CreateOneCreatorResolver,
     deleteManyCreator: actionResolvers.DeleteManyCreatorResolver,
     deleteOneCreator: actionResolvers.DeleteOneCreatorResolver,
@@ -155,6 +163,7 @@ const actionResolversMap = {
   NativeTypeModel: {
     aggregateNativeTypeModel: actionResolvers.AggregateNativeTypeModelResolver,
     createManyNativeTypeModel: actionResolvers.CreateManyNativeTypeModelResolver,
+    createManyAndReturnNativeTypeModel: actionResolvers.CreateManyAndReturnNativeTypeModelResolver,
     createOneNativeTypeModel: actionResolvers.CreateOneNativeTypeModelResolver,
     deleteManyNativeTypeModel: actionResolvers.DeleteManyNativeTypeModelResolver,
     deleteOneNativeTypeModel: actionResolvers.DeleteOneNativeTypeModelResolver,
@@ -171,6 +180,7 @@ const actionResolversMap = {
   Equipment: {
     aggregateEquipment: actionResolvers.AggregateEquipmentResolver,
     createManyEquipment: actionResolvers.CreateManyEquipmentResolver,
+    createManyAndReturnEquipment: actionResolvers.CreateManyAndReturnEquipmentResolver,
     createOneEquipment: actionResolvers.CreateOneEquipmentResolver,
     deleteManyEquipment: actionResolvers.DeleteManyEquipmentResolver,
     deleteOneEquipment: actionResolvers.DeleteOneEquipmentResolver,
@@ -187,6 +197,7 @@ const actionResolversMap = {
   Hidden: {
     aggregateHidden: actionResolvers.AggregateHiddenResolver,
     createManyHidden: actionResolvers.CreateManyHiddenResolver,
+    createManyAndReturnHidden: actionResolvers.CreateManyAndReturnHiddenResolver,
     createOneHidden: actionResolvers.CreateOneHiddenResolver,
     deleteManyHidden: actionResolvers.DeleteManyHiddenResolver,
     deleteOneHidden: actionResolvers.DeleteOneHiddenResolver,
@@ -202,21 +213,22 @@ const actionResolversMap = {
   }
 };
 const crudResolversInfo = {
-  MainUser: ["aggregateMainUser", "createManyMainUser", "createOneMainUser", "deleteManyMainUser", "deleteOneMainUser", "findFirstMainUser", "findFirstMainUserOrThrow", "mainUsers", "mainUser", "getMainUser", "groupByMainUser", "updateManyMainUser", "updateOneMainUser", "upsertOneMainUser"],
-  Post: ["aggregatePost", "createManyPost", "createOnePost", "deleteManyPost", "deleteOnePost", "findFirstPost", "findFirstPostOrThrow", "posts", "post", "getPost", "groupByPost", "updateManyPost", "updateOnePost", "upsertOnePost"],
-  Category: ["aggregateCategory", "createManyCategory", "createOneCategory", "deleteManyCategory", "deleteOneCategory", "findFirstCategory", "findFirstCategoryOrThrow", "categories", "category", "getCategory", "groupByCategory", "updateManyCategory", "updateOneCategory", "upsertOneCategory"],
-  Patient: ["aggregatePatient", "createManyPatient", "createOnePatient", "deleteManyPatient", "deleteOnePatient", "findFirstPatient", "findFirstPatientOrThrow", "patients", "patient", "getPatient", "groupByPatient", "updateManyPatient", "updateOnePatient", "upsertOnePatient"],
-  Movie: ["aggregateMovie", "createManyMovie", "createOneMovie", "deleteManyMovie", "deleteOneMovie", "findFirstMovie", "findFirstMovieOrThrow", "movies", "movie", "getMovie", "groupByMovie", "updateManyMovie", "updateOneMovie", "upsertOneMovie"],
-  Director: ["aggregateDirector", "createManyDirector", "createOneDirector", "deleteManyDirector", "deleteOneDirector", "findFirstDirector", "findFirstDirectorOrThrow", "directors", "director", "getDirector", "groupByDirector", "updateManyDirector", "updateOneDirector", "upsertOneDirector"],
-  Problem: ["aggregateProblem", "createManyProblem", "createOneProblem", "deleteManyProblem", "deleteOneProblem", "findFirstProblem", "findFirstProblemOrThrow", "problems", "problem", "getProblem", "groupByProblem", "updateManyProblem", "updateOneProblem", "upsertOneProblem"],
-  Creator: ["aggregateCreator", "createManyCreator", "createOneCreator", "deleteManyCreator", "deleteOneCreator", "findFirstCreator", "findFirstCreatorOrThrow", "creators", "creator", "getCreator", "groupByCreator", "updateManyCreator", "updateOneCreator", "upsertOneCreator"],
-  NativeTypeModel: ["aggregateNativeTypeModel", "createManyNativeTypeModel", "createOneNativeTypeModel", "deleteManyNativeTypeModel", "deleteOneNativeTypeModel", "findFirstNativeTypeModel", "findFirstNativeTypeModelOrThrow", "nativeTypeModels", "nativeTypeModel", "getNativeTypeModel", "groupByNativeTypeModel", "updateManyNativeTypeModel", "updateOneNativeTypeModel", "upsertOneNativeTypeModel"],
-  Equipment: ["aggregateEquipment", "createManyEquipment", "createOneEquipment", "deleteManyEquipment", "deleteOneEquipment", "findFirstEquipment", "findFirstEquipmentOrThrow", "equipments", "equipment", "getEquipment", "groupByEquipment", "updateManyEquipment", "updateOneEquipment", "upsertOneEquipment"],
-  Hidden: ["aggregateHidden", "createManyHidden", "createOneHidden", "deleteManyHidden", "deleteOneHidden", "findFirstHidden", "findFirstHiddenOrThrow", "hiddens", "hidden", "getHidden", "groupByHidden", "updateManyHidden", "updateOneHidden", "upsertOneHidden"]
+  MainUser: ["aggregateMainUser", "createManyMainUser", "createManyAndReturnMainUser", "createOneMainUser", "deleteManyMainUser", "deleteOneMainUser", "findFirstMainUser", "findFirstMainUserOrThrow", "mainUsers", "mainUser", "getMainUser", "groupByMainUser", "updateManyMainUser", "updateOneMainUser", "upsertOneMainUser"],
+  Post: ["aggregatePost", "createManyPost", "createManyAndReturnPost", "createOnePost", "deleteManyPost", "deleteOnePost", "findFirstPost", "findFirstPostOrThrow", "posts", "post", "getPost", "groupByPost", "updateManyPost", "updateOnePost", "upsertOnePost"],
+  Category: ["aggregateCategory", "createManyCategory", "createManyAndReturnCategory", "createOneCategory", "deleteManyCategory", "deleteOneCategory", "findFirstCategory", "findFirstCategoryOrThrow", "categories", "category", "getCategory", "groupByCategory", "updateManyCategory", "updateOneCategory", "upsertOneCategory"],
+  Patient: ["aggregatePatient", "createManyPatient", "createManyAndReturnPatient", "createOnePatient", "deleteManyPatient", "deleteOnePatient", "findFirstPatient", "findFirstPatientOrThrow", "patients", "patient", "getPatient", "groupByPatient", "updateManyPatient", "updateOnePatient", "upsertOnePatient"],
+  Movie: ["aggregateMovie", "createManyMovie", "createManyAndReturnMovie", "createOneMovie", "deleteManyMovie", "deleteOneMovie", "findFirstMovie", "findFirstMovieOrThrow", "movies", "movie", "getMovie", "groupByMovie", "updateManyMovie", "updateOneMovie", "upsertOneMovie"],
+  Director: ["aggregateDirector", "createManyDirector", "createManyAndReturnDirector", "createOneDirector", "deleteManyDirector", "deleteOneDirector", "findFirstDirector", "findFirstDirectorOrThrow", "directors", "director", "getDirector", "groupByDirector", "updateManyDirector", "updateOneDirector", "upsertOneDirector"],
+  Problem: ["aggregateProblem", "createManyProblem", "createManyAndReturnProblem", "createOneProblem", "deleteManyProblem", "deleteOneProblem", "findFirstProblem", "findFirstProblemOrThrow", "problems", "problem", "getProblem", "groupByProblem", "updateManyProblem", "updateOneProblem", "upsertOneProblem"],
+  Creator: ["aggregateCreator", "createManyCreator", "createManyAndReturnCreator", "createOneCreator", "deleteManyCreator", "deleteOneCreator", "findFirstCreator", "findFirstCreatorOrThrow", "creators", "creator", "getCreator", "groupByCreator", "updateManyCreator", "updateOneCreator", "upsertOneCreator"],
+  NativeTypeModel: ["aggregateNativeTypeModel", "createManyNativeTypeModel", "createManyAndReturnNativeTypeModel", "createOneNativeTypeModel", "deleteManyNativeTypeModel", "deleteOneNativeTypeModel", "findFirstNativeTypeModel", "findFirstNativeTypeModelOrThrow", "nativeTypeModels", "nativeTypeModel", "getNativeTypeModel", "groupByNativeTypeModel", "updateManyNativeTypeModel", "updateOneNativeTypeModel", "upsertOneNativeTypeModel"],
+  Equipment: ["aggregateEquipment", "createManyEquipment", "createManyAndReturnEquipment", "createOneEquipment", "deleteManyEquipment", "deleteOneEquipment", "findFirstEquipment", "findFirstEquipmentOrThrow", "equipments", "equipment", "getEquipment", "groupByEquipment", "updateManyEquipment", "updateOneEquipment", "upsertOneEquipment"],
+  Hidden: ["aggregateHidden", "createManyHidden", "createManyAndReturnHidden", "createOneHidden", "deleteManyHidden", "deleteOneHidden", "findFirstHidden", "findFirstHiddenOrThrow", "hiddens", "hidden", "getHidden", "groupByHidden", "updateManyHidden", "updateOneHidden", "upsertOneHidden"]
 };
 const argsInfo = {
   AggregateMainUserArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyMainUserArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnMainUserArgs: ["data", "skipDuplicates"],
   CreateOneMainUserArgs: ["data"],
   DeleteManyMainUserArgs: ["where"],
   DeleteOneMainUserArgs: ["where"],
@@ -231,6 +243,7 @@ const argsInfo = {
   UpsertOneMainUserArgs: ["where", "create", "update"],
   AggregatePostArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyPostArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnPostArgs: ["data", "skipDuplicates"],
   CreateOnePostArgs: ["data"],
   DeleteManyPostArgs: ["where"],
   DeleteOnePostArgs: ["where"],
@@ -245,6 +258,7 @@ const argsInfo = {
   UpsertOnePostArgs: ["where", "create", "update"],
   AggregateCategoryArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyCategoryArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnCategoryArgs: ["data", "skipDuplicates"],
   CreateOneCategoryArgs: ["data"],
   DeleteManyCategoryArgs: ["where"],
   DeleteOneCategoryArgs: ["where"],
@@ -259,6 +273,7 @@ const argsInfo = {
   UpsertOneCategoryArgs: ["where", "create", "update"],
   AggregatePatientArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyPatientArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnPatientArgs: ["data", "skipDuplicates"],
   CreateOnePatientArgs: ["data"],
   DeleteManyPatientArgs: ["where"],
   DeleteOnePatientArgs: ["where"],
@@ -273,6 +288,7 @@ const argsInfo = {
   UpsertOnePatientArgs: ["where", "create", "update"],
   AggregateMovieArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyMovieArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnMovieArgs: ["data", "skipDuplicates"],
   CreateOneMovieArgs: ["data"],
   DeleteManyMovieArgs: ["where"],
   DeleteOneMovieArgs: ["where"],
@@ -287,6 +303,7 @@ const argsInfo = {
   UpsertOneMovieArgs: ["where", "create", "update"],
   AggregateDirectorArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyDirectorArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnDirectorArgs: ["data", "skipDuplicates"],
   CreateOneDirectorArgs: ["data"],
   DeleteManyDirectorArgs: ["where"],
   DeleteOneDirectorArgs: ["where"],
@@ -301,6 +318,7 @@ const argsInfo = {
   UpsertOneDirectorArgs: ["where", "create", "update"],
   AggregateProblemArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyProblemArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnProblemArgs: ["data", "skipDuplicates"],
   CreateOneProblemArgs: ["data"],
   DeleteManyProblemArgs: ["where"],
   DeleteOneProblemArgs: ["where"],
@@ -315,6 +333,7 @@ const argsInfo = {
   UpsertOneProblemArgs: ["where", "create", "update"],
   AggregateCreatorArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyCreatorArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnCreatorArgs: ["data", "skipDuplicates"],
   CreateOneCreatorArgs: ["data"],
   DeleteManyCreatorArgs: ["where"],
   DeleteOneCreatorArgs: ["where"],
@@ -329,6 +348,7 @@ const argsInfo = {
   UpsertOneCreatorArgs: ["where", "create", "update"],
   AggregateNativeTypeModelArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyNativeTypeModelArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnNativeTypeModelArgs: ["data", "skipDuplicates"],
   CreateOneNativeTypeModelArgs: ["data"],
   DeleteManyNativeTypeModelArgs: ["where"],
   DeleteOneNativeTypeModelArgs: ["where"],
@@ -343,6 +363,7 @@ const argsInfo = {
   UpsertOneNativeTypeModelArgs: ["where", "create", "update"],
   AggregateEquipmentArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyEquipmentArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnEquipmentArgs: ["data", "skipDuplicates"],
   CreateOneEquipmentArgs: ["data"],
   DeleteManyEquipmentArgs: ["where"],
   DeleteOneEquipmentArgs: ["where"],
@@ -357,6 +378,7 @@ const argsInfo = {
   UpsertOneEquipmentArgs: ["where", "create", "update"],
   AggregateHiddenArgs: ["where", "orderBy", "cursor", "take", "skip"],
   CreateManyHiddenArgs: ["data", "skipDuplicates"],
+  CreateManyAndReturnHiddenArgs: ["data", "skipDuplicates"],
   CreateOneHiddenArgs: ["data"],
   DeleteManyHiddenArgs: ["where"],
   DeleteOneHiddenArgs: ["where"],
@@ -380,7 +402,11 @@ type ModelResolverActionNames<
 export type ResolverActionsConfig<
   TModel extends ResolverModelNames
 > = Partial<Record<ModelResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
-  & { _all: MethodDecorator[] };
+  & {
+    _all?: MethodDecorator[];
+    _query?: MethodDecorator[];
+    _mutation?: MethodDecorator[];
+  };
 
 export type ResolversEnhanceMap = {
   [TModel in ResolverModelNames]?: ResolverActionsConfig<TModel>;
@@ -389,22 +415,31 @@ export type ResolversEnhanceMap = {
 export function applyResolversEnhanceMap(
   resolversEnhanceMap: ResolversEnhanceMap,
 ) {
+  const mutationOperationPrefixes = [
+    "createOne", "createMany", "createManyAndReturn", "deleteOne", "updateOne", "deleteMany", "updateMany", "upsertOne"
+  ];
   for (const resolversEnhanceMapKey of Object.keys(resolversEnhanceMap)) {
     const modelName = resolversEnhanceMapKey as keyof typeof resolversEnhanceMap;
     const crudTarget = crudResolversMap[modelName].prototype;
     const resolverActionsConfig = resolversEnhanceMap[modelName]!;
     const actionResolversConfig = actionResolversMap[modelName];
-    const allActionsDecorators = resolverActionsConfig._all ?? [];
+    const allActionsDecorators = resolverActionsConfig._all;
     const resolverActionNames = crudResolversInfo[modelName as keyof typeof crudResolversInfo];
     for (const resolverActionName of resolverActionNames) {
       const maybeDecoratorsOrFn = resolverActionsConfig[
         resolverActionName as keyof typeof resolverActionsConfig
       ] as MethodDecorator[] | MethodDecoratorOverrideFn | undefined;
+      const isWriteOperation = mutationOperationPrefixes.some(prefix => resolverActionName.startsWith(prefix));
+      const operationKindDecorators = isWriteOperation ? resolverActionsConfig._mutation : resolverActionsConfig._query;
+      const mainDecorators = [
+        ...allActionsDecorators ?? [],
+        ...operationKindDecorators ?? [],
+      ]
       let decorators: MethodDecorator[];
       if (typeof maybeDecoratorsOrFn === "function") {
-        decorators = maybeDecoratorsOrFn(allActionsDecorators);
+        decorators = maybeDecoratorsOrFn(mainDecorators);
       } else {
-        decorators = [...allActionsDecorators, ...maybeDecoratorsOrFn ?? []];
+        decorators = [...mainDecorators, ...maybeDecoratorsOrFn ?? []];
       }
       const actionTarget = (actionResolversConfig[
         resolverActionName as keyof typeof actionResolversConfig
@@ -477,7 +512,7 @@ type RelationResolverActionNames<
 
 export type RelationResolverActionsConfig<TModel extends RelationResolverModelNames>
   = Partial<Record<RelationResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
-  & { "_all": MethodDecorator[] };
+  & { _all?: MethodDecorator[] };
 
 export type RelationResolversEnhanceMap = {
   [TModel in RelationResolverModelNames]?: RelationResolverActionsConfig<TModel>;
@@ -512,11 +547,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | "_all", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -549,7 +584,7 @@ function applyTypeClassEnhanceConfig<
 
 const modelsInfo = {
   MainUser: ["id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases"],
-  Post: ["uuid", "createdAt", "updatedAt", "published", "title", "content", "authorId", "kind", "metadata"],
+  Post: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "content", "authorId", "kind", "metadata"],
   Category: ["name", "slug", "number"],
   Patient: ["firstName", "lastName", "email"],
   Movie: ["directorFirstName", "directorLastName", "title"],
@@ -668,7 +703,18 @@ const outputsInfo = {
   EquipmentMaxAggregate: ["id", "name"],
   HiddenCountAggregate: ["id", "name", "_all"],
   HiddenMinAggregate: ["id", "name"],
-  HiddenMaxAggregate: ["id", "name"]
+  HiddenMaxAggregate: ["id", "name"],
+  CreateManyAndReturnMainUser: ["id", "email", "name", "age", "balance", "amount", "role", "grades", "aliases"],
+  CreateManyAndReturnPost: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "author", "editor"],
+  CreateManyAndReturnCategory: ["name", "slug", "number"],
+  CreateManyAndReturnPatient: ["firstName", "lastName", "email"],
+  CreateManyAndReturnMovie: ["directorFirstName", "directorLastName", "title", "director"],
+  CreateManyAndReturnDirector: ["firstName", "lastName"],
+  CreateManyAndReturnProblem: ["id", "problemText", "creatorId", "creator"],
+  CreateManyAndReturnCreator: ["id", "name"],
+  CreateManyAndReturnNativeTypeModel: ["id", "bigInt", "byteA", "decimal"],
+  CreateManyAndReturnEquipment: ["id", "name"],
+  CreateManyAndReturnHidden: ["id", "name"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -709,69 +755,69 @@ export function applyOutputTypesEnhanceMap(
 }
 
 const inputsInfo = {
-  MainUserWhereInput: ["AND", "OR", "NOT", "id", "email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "editorPosts", "grades", "aliases"],
-  MainUserOrderByWithRelationAndSearchRelevanceInput: ["id", "email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "editorPosts", "grades", "aliases", "_relevance"],
-  MainUserWhereUniqueInput: ["id", "email", "AND", "OR", "NOT", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "editorPosts", "grades", "aliases"],
+  MainUserWhereInput: ["AND", "OR", "NOT", "id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts", "editorPosts"],
+  MainUserOrderByWithRelationInput: ["id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts", "editorPosts", "_relevance"],
+  MainUserWhereUniqueInput: ["id", "email", "AND", "OR", "NOT", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts", "editorPosts"],
   MainUserOrderByWithAggregationInput: ["id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "_count", "_avg", "_max", "_min", "_sum"],
   MainUserScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases"],
-  PostWhereInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "authorId", "editor", "editorId", "kind", "metadata"],
-  PostOrderByWithRelationAndSearchRelevanceInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "authorId", "editor", "editorId", "kind", "metadata", "_relevance"],
-  PostWhereUniqueInput: ["uuid", "AND", "OR", "NOT", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "authorId", "editor", "editorId", "kind", "metadata"],
-  PostOrderByWithAggregationInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "_count", "_avg", "_max", "_min", "_sum"],
-  PostScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
+  PostWhereInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "author", "editor"],
+  PostOrderByWithRelationInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "author", "editor", "_relevance"],
+  PostWhereUniqueInput: ["uuid", "AND", "OR", "NOT", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "author", "editor"],
+  PostOrderByWithAggregationInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata", "_count", "_avg", "_max", "_min", "_sum"],
+  PostScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
   CategoryWhereInput: ["AND", "OR", "NOT", "name", "slug", "number"],
-  CategoryOrderByWithRelationAndSearchRelevanceInput: ["name", "slug", "number", "_relevance"],
+  CategoryOrderByWithRelationInput: ["name", "slug", "number", "_relevance"],
   CategoryWhereUniqueInput: ["categoryCompoundUnique", "AND", "OR", "NOT", "name", "slug", "number"],
   CategoryOrderByWithAggregationInput: ["name", "slug", "number", "_count", "_avg", "_max", "_min", "_sum"],
   CategoryScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "name", "slug", "number"],
   PatientWhereInput: ["AND", "OR", "NOT", "firstName", "lastName", "email"],
-  PatientOrderByWithRelationAndSearchRelevanceInput: ["firstName", "lastName", "email", "_relevance"],
+  PatientOrderByWithRelationInput: ["firstName", "lastName", "email", "_relevance"],
   PatientWhereUniqueInput: ["firstName_lastName", "AND", "OR", "NOT", "firstName", "lastName", "email"],
   PatientOrderByWithAggregationInput: ["firstName", "lastName", "email", "_count", "_max", "_min"],
   PatientScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "firstName", "lastName", "email"],
-  MovieWhereInput: ["AND", "OR", "NOT", "directorFirstName", "directorLastName", "director", "title"],
-  MovieOrderByWithRelationAndSearchRelevanceInput: ["directorFirstName", "directorLastName", "director", "title", "_relevance"],
-  MovieWhereUniqueInput: ["movieCompoundId", "AND", "OR", "NOT", "directorFirstName", "directorLastName", "director", "title"],
+  MovieWhereInput: ["AND", "OR", "NOT", "directorFirstName", "directorLastName", "title", "director"],
+  MovieOrderByWithRelationInput: ["directorFirstName", "directorLastName", "title", "director", "_relevance"],
+  MovieWhereUniqueInput: ["movieCompoundId", "AND", "OR", "NOT", "directorFirstName", "directorLastName", "title", "director"],
   MovieOrderByWithAggregationInput: ["directorFirstName", "directorLastName", "title", "_count", "_max", "_min"],
   MovieScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "directorFirstName", "directorLastName", "title"],
   DirectorWhereInput: ["AND", "OR", "NOT", "firstName", "lastName", "movies"],
-  DirectorOrderByWithRelationAndSearchRelevanceInput: ["firstName", "lastName", "movies", "_relevance"],
+  DirectorOrderByWithRelationInput: ["firstName", "lastName", "movies", "_relevance"],
   DirectorWhereUniqueInput: ["firstName_lastName", "AND", "OR", "NOT", "firstName", "lastName", "movies"],
   DirectorOrderByWithAggregationInput: ["firstName", "lastName", "_count", "_max", "_min"],
   DirectorScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "firstName", "lastName"],
-  ProblemWhereInput: ["AND", "OR", "NOT", "id", "problemText", "likedBy", "creator", "creatorId"],
-  ProblemOrderByWithRelationAndSearchRelevanceInput: ["id", "problemText", "likedBy", "creator", "creatorId", "_relevance"],
-  ProblemWhereUniqueInput: ["id", "AND", "OR", "NOT", "problemText", "likedBy", "creator", "creatorId"],
+  ProblemWhereInput: ["AND", "OR", "NOT", "id", "problemText", "creatorId", "likedBy", "creator"],
+  ProblemOrderByWithRelationInput: ["id", "problemText", "creatorId", "likedBy", "creator", "_relevance"],
+  ProblemWhereUniqueInput: ["id", "AND", "OR", "NOT", "problemText", "creatorId", "likedBy", "creator"],
   ProblemOrderByWithAggregationInput: ["id", "problemText", "creatorId", "_count", "_avg", "_max", "_min", "_sum"],
   ProblemScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "problemText", "creatorId"],
   CreatorWhereInput: ["AND", "OR", "NOT", "id", "name", "likes", "problems"],
-  CreatorOrderByWithRelationAndSearchRelevanceInput: ["id", "name", "likes", "problems", "_relevance"],
+  CreatorOrderByWithRelationInput: ["id", "name", "likes", "problems", "_relevance"],
   CreatorWhereUniqueInput: ["id", "AND", "OR", "NOT", "name", "likes", "problems"],
   CreatorOrderByWithAggregationInput: ["id", "name", "_count", "_avg", "_max", "_min", "_sum"],
   CreatorScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "name"],
   NativeTypeModelWhereInput: ["AND", "OR", "NOT", "id", "bigInt", "byteA", "decimal"],
-  NativeTypeModelOrderByWithRelationAndSearchRelevanceInput: ["id", "bigInt", "byteA", "decimal"],
+  NativeTypeModelOrderByWithRelationInput: ["id", "bigInt", "byteA", "decimal"],
   NativeTypeModelWhereUniqueInput: ["id", "AND", "OR", "NOT", "bigInt", "byteA", "decimal"],
   NativeTypeModelOrderByWithAggregationInput: ["id", "bigInt", "byteA", "decimal", "_count", "_avg", "_max", "_min", "_sum"],
   NativeTypeModelScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "bigInt", "byteA", "decimal"],
   EquipmentWhereInput: ["AND", "OR", "NOT", "id", "name"],
-  EquipmentOrderByWithRelationAndSearchRelevanceInput: ["id", "name", "_relevance"],
+  EquipmentOrderByWithRelationInput: ["id", "name", "_relevance"],
   EquipmentWhereUniqueInput: ["id", "AND", "OR", "NOT", "name"],
   EquipmentOrderByWithAggregationInput: ["id", "name", "_count", "_max", "_min"],
   EquipmentScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "name"],
   HiddenWhereInput: ["AND", "OR", "NOT", "id", "name"],
-  HiddenOrderByWithRelationAndSearchRelevanceInput: ["id", "name", "_relevance"],
+  HiddenOrderByWithRelationInput: ["id", "name", "_relevance"],
   HiddenWhereUniqueInput: ["id", "AND", "OR", "NOT", "name"],
   HiddenOrderByWithAggregationInput: ["id", "name", "_count", "_max", "_min"],
   HiddenScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "name"],
-  MainUserCreateInput: ["email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "editorPosts", "grades", "aliases"],
-  MainUserUpdateInput: ["email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "editorPosts", "grades", "aliases"],
+  MainUserCreateInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts", "editorPosts"],
+  MainUserUpdateInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts", "editorPosts"],
   MainUserCreateManyInput: ["id", "email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases"],
   MainUserUpdateManyMutationInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases"],
-  PostCreateInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "editor", "kind", "metadata"],
-  PostUpdateInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "editor", "kind", "metadata"],
-  PostCreateManyInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
-  PostUpdateManyMutationInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "kind", "metadata"],
+  PostCreateInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "author", "editor"],
+  PostUpdateInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "author", "editor"],
+  PostCreateManyInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
+  PostUpdateManyMutationInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata"],
   CategoryCreateInput: ["name", "slug", "number"],
   CategoryUpdateInput: ["name", "slug", "number"],
   CategoryCreateManyInput: ["name", "slug", "number"],
@@ -780,8 +826,8 @@ const inputsInfo = {
   PatientUpdateInput: ["firstName", "lastName", "email"],
   PatientCreateManyInput: ["firstName", "lastName", "email"],
   PatientUpdateManyMutationInput: ["firstName", "lastName", "email"],
-  MovieCreateInput: ["director", "title"],
-  MovieUpdateInput: ["director", "title"],
+  MovieCreateInput: ["title", "director"],
+  MovieUpdateInput: ["title", "director"],
   MovieCreateManyInput: ["directorFirstName", "directorLastName", "title"],
   MovieUpdateManyMutationInput: ["title"],
   DirectorCreateInput: ["firstName", "lastName", "movies"],
@@ -812,10 +858,10 @@ const inputsInfo = {
   StringFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "contains", "startsWith", "endsWith", "search", "mode", "not"],
   StringNullableFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "contains", "startsWith", "endsWith", "search", "mode", "not"],
   FloatFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not"],
-  PostListRelationFilter: ["every", "some", "none"],
   EnumRoleFilter: ["equals", "in", "notIn", "not"],
   IntNullableListFilter: ["equals", "has", "hasEvery", "hasSome", "isEmpty"],
   StringNullableListFilter: ["equals", "has", "hasEvery", "hasSome", "isEmpty"],
+  PostListRelationFilter: ["every", "some", "none"],
   SortOrderInput: ["sort", "nulls"],
   PostOrderByRelationAggregateInput: ["_count"],
   MainUserOrderByRelevanceInput: ["fields", "sort", "search"],
@@ -831,15 +877,16 @@ const inputsInfo = {
   EnumRoleWithAggregatesFilter: ["equals", "in", "notIn", "not", "_count", "_min", "_max"],
   DateTimeFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not"],
   BoolFilter: ["equals", "not"],
-  MainUserRelationFilter: ["is", "isNot"],
   IntNullableFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not"],
   EnumPostKindNullableFilter: ["equals", "in", "notIn", "not"],
   JsonFilter: ["equals", "path", "string_contains", "string_starts_with", "string_ends_with", "array_contains", "array_starts_with", "array_ends_with", "lt", "lte", "gt", "gte", "not"],
+  MainUserRelationFilter: ["is", "isNot"],
+  UserNullableRelationFilter: ["is", "isNot"],
   PostOrderByRelevanceInput: ["fields", "sort", "search"],
-  PostCountOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
+  PostCountOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
   PostAvgOrderByAggregateInput: ["authorId", "editorId"],
-  PostMaxOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind"],
-  PostMinOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind"],
+  PostMaxOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind"],
+  PostMinOrderByAggregateInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind"],
   PostSumOrderByAggregateInput: ["authorId", "editorId"],
   DateTimeWithAggregatesFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not", "_count", "_min", "_max"],
   BoolWithAggregatesFilter: ["equals", "not", "_count", "_min", "_max"],
@@ -872,7 +919,7 @@ const inputsInfo = {
   DirectorMaxOrderByAggregateInput: ["firstName", "lastName"],
   DirectorMinOrderByAggregateInput: ["firstName", "lastName"],
   CreatorListRelationFilter: ["every", "some", "none"],
-  CreatorRelationFilter: ["is", "isNot"],
+  CreatorNullableRelationFilter: ["is", "isNot"],
   CreatorOrderByRelationAggregateInput: ["_count"],
   ProblemOrderByRelevanceInput: ["fields", "sort", "search"],
   ProblemCountOrderByAggregateInput: ["id", "problemText", "creatorId"],
@@ -907,26 +954,26 @@ const inputsInfo = {
   HiddenCountOrderByAggregateInput: ["id", "name"],
   HiddenMaxOrderByAggregateInput: ["id", "name"],
   HiddenMinOrderByAggregateInput: ["id", "name"],
-  PostCreateNestedManyWithoutAuthorInput: ["create", "connectOrCreate", "createMany", "connect"],
-  PostCreateNestedManyWithoutEditorInput: ["create", "connectOrCreate", "createMany", "connect"],
   MainUserCreategradesInput: ["set"],
   MainUserCreatealiasesInput: ["set"],
+  PostCreateNestedManyWithoutAuthorInput: ["create", "connectOrCreate", "createMany", "connect"],
+  PostCreateNestedManyWithoutEditorInput: ["create", "connectOrCreate", "createMany", "connect"],
   StringFieldUpdateOperationsInput: ["set"],
   NullableStringFieldUpdateOperationsInput: ["set"],
   IntFieldUpdateOperationsInput: ["set", "increment", "decrement", "multiply", "divide"],
   FloatFieldUpdateOperationsInput: ["set", "increment", "decrement", "multiply", "divide"],
-  PostUpdateManyWithoutAuthorNestedInput: ["create", "connectOrCreate", "upsert", "createMany", "set", "disconnect", "delete", "connect", "update", "updateMany", "deleteMany"],
   EnumRoleFieldUpdateOperationsInput: ["set"],
-  PostUpdateManyWithoutEditorNestedInput: ["create", "connectOrCreate", "upsert", "createMany", "set", "disconnect", "delete", "connect", "update", "updateMany", "deleteMany"],
   MainUserUpdategradesInput: ["set", "push"],
   MainUserUpdatealiasesInput: ["set", "push"],
+  PostUpdateManyWithoutAuthorNestedInput: ["create", "connectOrCreate", "upsert", "createMany", "set", "disconnect", "delete", "connect", "update", "updateMany", "deleteMany"],
+  PostUpdateManyWithoutEditorNestedInput: ["create", "connectOrCreate", "upsert", "createMany", "set", "disconnect", "delete", "connect", "update", "updateMany", "deleteMany"],
   MainUserCreateNestedOneWithoutPostsInput: ["create", "connectOrCreate", "connect"],
   MainUserCreateNestedOneWithoutEditorPostsInput: ["create", "connectOrCreate", "connect"],
   DateTimeFieldUpdateOperationsInput: ["set"],
   BoolFieldUpdateOperationsInput: ["set"],
+  NullableEnumPostKindFieldUpdateOperationsInput: ["set"],
   MainUserUpdateOneRequiredWithoutPostsNestedInput: ["create", "connectOrCreate", "upsert", "connect", "update"],
   MainUserUpdateOneWithoutEditorPostsNestedInput: ["create", "connectOrCreate", "upsert", "disconnect", "delete", "connect", "update"],
-  NullableEnumPostKindFieldUpdateOperationsInput: ["set"],
   NullableIntFieldUpdateOperationsInput: ["set", "increment", "decrement", "multiply", "divide"],
   DirectorCreateNestedOneWithoutMoviesInput: ["create", "connectOrCreate", "connect"],
   DirectorUpdateOneRequiredWithoutMoviesNestedInput: ["create", "connectOrCreate", "upsert", "connect", "update"],
@@ -969,29 +1016,29 @@ const inputsInfo = {
   NestedBigIntNullableWithAggregatesFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not", "_count", "_avg", "_sum", "_min", "_max"],
   NestedBytesNullableWithAggregatesFilter: ["equals", "in", "notIn", "not", "_count", "_min", "_max"],
   NestedDecimalNullableWithAggregatesFilter: ["equals", "in", "notIn", "lt", "lte", "gt", "gte", "not", "_count", "_avg", "_sum", "_min", "_max"],
-  PostCreateWithoutAuthorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "editor", "kind", "metadata"],
+  PostCreateWithoutAuthorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "editor"],
   PostCreateOrConnectWithoutAuthorInput: ["where", "create"],
   PostCreateManyAuthorInputEnvelope: ["data", "skipDuplicates"],
-  PostCreateWithoutEditorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "kind", "metadata"],
+  PostCreateWithoutEditorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "author"],
   PostCreateOrConnectWithoutEditorInput: ["where", "create"],
   PostCreateManyEditorInputEnvelope: ["data", "skipDuplicates"],
   PostUpsertWithWhereUniqueWithoutAuthorInput: ["where", "update", "create"],
   PostUpdateWithWhereUniqueWithoutAuthorInput: ["where", "data"],
   PostUpdateManyWithWhereWithoutAuthorInput: ["where", "data"],
-  PostScalarWhereInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
+  PostScalarWhereInput: ["AND", "OR", "NOT", "uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "editorId", "kind", "metadata"],
   PostUpsertWithWhereUniqueWithoutEditorInput: ["where", "update", "create"],
   PostUpdateWithWhereUniqueWithoutEditorInput: ["where", "data"],
   PostUpdateManyWithWhereWithoutEditorInput: ["where", "data"],
-  MainUserCreateWithoutPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "editorPosts", "grades", "aliases"],
+  MainUserCreateWithoutPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "editorPosts"],
   MainUserCreateOrConnectWithoutPostsInput: ["where", "create"],
-  MainUserCreateWithoutEditorPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "grades", "aliases"],
+  MainUserCreateWithoutEditorPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts"],
   MainUserCreateOrConnectWithoutEditorPostsInput: ["where", "create"],
   MainUserUpsertWithoutPostsInput: ["update", "create", "where"],
   MainUserUpdateToOneWithWhereWithoutPostsInput: ["where", "data"],
-  MainUserUpdateWithoutPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "editorPosts", "grades", "aliases"],
+  MainUserUpdateWithoutPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "editorPosts"],
   MainUserUpsertWithoutEditorPostsInput: ["update", "create", "where"],
   MainUserUpdateToOneWithWhereWithoutEditorPostsInput: ["where", "data"],
-  MainUserUpdateWithoutEditorPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "clientPosts", "role", "grades", "aliases"],
+  MainUserUpdateWithoutEditorPostsInput: ["email", "firstName", "age", "accountBalance", "amount", "role", "grades", "aliases", "clientPosts"],
   DirectorCreateWithoutMoviesInput: ["firstName", "lastName"],
   DirectorCreateOrConnectWithoutMoviesInput: ["where", "create"],
   DirectorUpsertWithoutMoviesInput: ["update", "create", "where"],
@@ -1027,10 +1074,10 @@ const inputsInfo = {
   ProblemUpsertWithWhereUniqueWithoutCreatorInput: ["where", "update", "create"],
   ProblemUpdateWithWhereUniqueWithoutCreatorInput: ["where", "data"],
   ProblemUpdateManyWithWhereWithoutCreatorInput: ["where", "data"],
-  PostCreateManyAuthorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "editorId", "kind", "metadata"],
-  PostCreateManyEditorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "authorId", "kind", "metadata"],
-  PostUpdateWithoutAuthorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "editor", "kind", "metadata"],
-  PostUpdateWithoutEditorInput: ["uuid", "createdAt", "updatedAt", "published", "title", "subtitle", "content", "author", "kind", "metadata"],
+  PostCreateManyAuthorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "editorId", "kind", "metadata"],
+  PostCreateManyEditorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "authorId", "kind", "metadata"],
+  PostUpdateWithoutAuthorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "editor"],
+  PostUpdateWithoutEditorInput: ["uuid", "createdAt", "updatedAt", "isPublished", "title", "subtitle", "content", "kind", "metadata", "author"],
   MovieCreateManyDirectorInput: ["title"],
   MovieUpdateWithoutDirectorInput: ["title"],
   CreatorUpdateWithoutLikesInput: ["name", "problems"],

@@ -1,4 +1,4 @@
-import { DMMF as PrismaDMMF } from "@prisma/client/runtime";
+import type { DMMF as PrismaDMMF } from "@prisma/generator-helper";
 import { DMMF } from "./types";
 import { parseDocumentationAttributes } from "./helpers";
 import {
@@ -42,7 +42,7 @@ export function transformSchema(
 }
 
 export function transformMappings(
-  mapping: PrismaDMMF.ModelMapping[],
+  mapping: readonly PrismaDMMF.ModelMapping[],
   dmmfDocument: DmmfDocument,
   options: GeneratorOptions,
 ): DMMF.ModelMapping[] {
@@ -77,6 +77,8 @@ export function transformModelWithFields(dmmfDocument: DmmfDocument) {
 }
 
 function transformModelField(dmmfDocument: DmmfDocument) {
+  const { omitInputFieldsByDefault, omitOutputFieldsByDefault } =
+    dmmfDocument.options;
   return (field: PrismaDMMF.Field): DMMF.ModelField => {
     const attributeArgs = parseDocumentationAttributes<{ name: string }>(
       field.documentation,
@@ -87,8 +89,8 @@ function transformModelField(dmmfDocument: DmmfDocument) {
       field.kind === "enum"
         ? "enumTypes"
         : field.kind === "object"
-        ? "outputObjectTypes"
-        : "scalar";
+          ? "outputObjectTypes"
+          : "scalar";
     if (typeof field.type !== "string") {
       throw new Error(
         `[Internal Generator Error] Unexpected 'field.type' value: "${field.type}""`,
@@ -114,7 +116,7 @@ function transformModelField(dmmfDocument: DmmfDocument) {
       undefined,
       field.isId,
     );
-    const { output = false, input = false } = parseDocumentationAttributes<{
+    const omitFieldAttribute = parseDocumentationAttributes<{
       output: boolean;
       input: boolean | InputOmitSetting[];
     }>(field.documentation, "omit", "field");
@@ -126,7 +128,16 @@ function transformModelField(dmmfDocument: DmmfDocument) {
       fieldTSType,
       typeGraphQLType,
       docs: cleanDocsString(field.documentation),
-      isOmitted: { output, input },
+      isOmitted: {
+        input:
+          omitFieldAttribute.input ??
+          omitInputFieldsByDefault?.includes(field.name) ??
+          false,
+        output:
+          omitFieldAttribute.output ??
+          omitOutputFieldsByDefault?.includes(field.name) ??
+          false,
+      },
     };
   };
 }
@@ -172,15 +183,17 @@ function transformInputType(dmmfDocument: DmmfDocument) {
           const isOmitted = !modelField?.isOmitted.input
             ? false
             : typeof modelField.isOmitted.input === "boolean"
-            ? modelField.isOmitted.input
-            : (modelField.isOmitted.input.includes(InputOmitSetting.Create) &&
-                inputType.name.includes("Create")) ||
-              (modelField.isOmitted.input.includes(InputOmitSetting.Update) &&
-                inputType.name.includes("Update")) ||
-              (modelField.isOmitted.input.includes(InputOmitSetting.Where) &&
-                inputType.name.includes("Where")) ||
-              (modelField.isOmitted.input.includes(InputOmitSetting.OrderBy) &&
-                inputType.name.includes("OrderBy"));
+              ? modelField.isOmitted.input
+              : (modelField.isOmitted.input.includes(InputOmitSetting.Create) &&
+                  inputType.name.includes("Create")) ||
+                (modelField.isOmitted.input.includes(InputOmitSetting.Update) &&
+                  inputType.name.includes("Update")) ||
+                (modelField.isOmitted.input.includes(InputOmitSetting.Where) &&
+                  inputType.name.includes("Where")) ||
+                (modelField.isOmitted.input.includes(
+                  InputOmitSetting.OrderBy,
+                ) &&
+                  inputType.name.includes("OrderBy"));
           return {
             ...field,
             selectedInputType,
@@ -277,6 +290,18 @@ export function getMappedOutputTypeName(
       outputTypeName.replace("Aggregate", ""),
     );
     return `Aggregate${modelTypeName}`;
+  }
+
+  if (
+    outputTypeName.startsWith("CreateMany") &&
+    outputTypeName.endsWith("AndReturnOutputType")
+  ) {
+    const modelTypeName = dmmfDocument.getModelTypeName(
+      outputTypeName
+        .replace("CreateMany", "")
+        .replace("AndReturnOutputType", ""),
+    );
+    return `CreateManyAndReturn${modelTypeName}`;
   }
 
   if (dmmfDocument.isModelName(outputTypeName)) {
@@ -385,10 +410,10 @@ function transformMapping(
 
 function selectInputTypeFromTypes(dmmfDocument: DmmfDocument) {
   return (
-    inputTypes: PrismaDMMF.SchemaArgInputType[],
+    inputTypes: readonly PrismaDMMF.InputTypeRef[],
   ): DMMF.SchemaArgInputType => {
     const { useUncheckedScalarInputs, useSimpleInputs } = dmmfDocument.options;
-    let possibleInputTypes: PrismaDMMF.SchemaArgInputType[];
+    let possibleInputTypes: readonly PrismaDMMF.InputTypeRef[];
     possibleInputTypes = inputTypes.filter(
       it =>
         it.location === "inputObjectTypes" &&

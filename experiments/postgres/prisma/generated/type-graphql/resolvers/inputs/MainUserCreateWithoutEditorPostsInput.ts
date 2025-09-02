@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../../scalars";
 import { PostCreateNestedManyWithoutAuthorInput } from "../inputs/PostCreateNestedManyWithoutAuthorInput";
 import { Role } from "../../enums/Role";
 
-@TypeGraphQL.InputType("MainUserCreateWithoutEditorPostsInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MainUserCreateWithoutEditorPostsInput", {})
 export class MainUserCreateWithoutEditorPostsInput {
   @TypeGraphQL.Field(_type => String, {
     nullable: false
@@ -28,8 +26,6 @@ export class MainUserCreateWithoutEditorPostsInput {
   })
   amount!: number;
 
-  posts?: PostCreateNestedManyWithoutAuthorInput | undefined;
-
   @TypeGraphQL.Field(_type => Role, {
     nullable: false
   })
@@ -44,6 +40,8 @@ export class MainUserCreateWithoutEditorPostsInput {
     nullable: true
   })
   aliases?: string[] | undefined;
+
+  posts?: PostCreateNestedManyWithoutAuthorInput | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true

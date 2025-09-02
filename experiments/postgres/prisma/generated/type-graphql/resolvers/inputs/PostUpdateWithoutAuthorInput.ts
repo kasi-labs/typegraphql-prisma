@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../../scalars";
 import { MainUserUpdateOneWithoutEditorPostsNestedInput } from "../inputs/MainUserUpdateOneWithoutEditorPostsNestedInput";
 import { PostKind } from "../../enums/PostKind";
 
-@TypeGraphQL.InputType("PostUpdateWithoutAuthorInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("PostUpdateWithoutAuthorInput", {})
 export class PostUpdateWithoutAuthorInput {
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -34,11 +32,6 @@ export class PostUpdateWithoutAuthorInput {
   })
   content?: string | undefined;
 
-  @TypeGraphQL.Field(_type => MainUserUpdateOneWithoutEditorPostsNestedInput, {
-    nullable: true
-  })
-  editor?: MainUserUpdateOneWithoutEditorPostsNestedInput | undefined;
-
   @TypeGraphQL.Field(_type => PostKind, {
     nullable: true
   })
@@ -48,4 +41,9 @@ export class PostUpdateWithoutAuthorInput {
     nullable: true
   })
   metadata?: Prisma.InputJsonValue | undefined;
+
+  @TypeGraphQL.Field(_type => MainUserUpdateOneWithoutEditorPostsNestedInput, {
+    nullable: true
+  })
+  editor?: MainUserUpdateOneWithoutEditorPostsNestedInput | undefined;
 }

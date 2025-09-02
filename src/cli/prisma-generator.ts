@@ -10,7 +10,12 @@ import {
   InternalGeneratorOptions,
 } from "../generator/options";
 import { ALL_EMIT_BLOCK_KINDS } from "../generator/emit-block";
-import { parseStringBoolean, parseStringArray } from "./helpers";
+import {
+  parseStringBoolean,
+  parseStringArray,
+  parseStringEnum,
+  parseString,
+} from "./helpers";
 
 export async function generate(options: GeneratorOptions) {
   const outputDir = parseEnvValue(options.generator.output!);
@@ -46,8 +51,30 @@ export async function generate(options: GeneratorOptions) {
     emitRedundantTypesInfo: parseStringBoolean(
       generatorConfig.emitRedundantTypesInfo,
     ),
-    customPrismaImportPath: generatorConfig.customPrismaImportPath,
-    contextPrismaKey: generatorConfig.contextPrismaKey,
+    customPrismaImportPath: parseString(
+      generatorConfig.customPrismaImportPath,
+      "customPrismaImportPath",
+    ),
+    contextPrismaKey: parseString(
+      generatorConfig.contextPrismaKey,
+      "contextPrismaKey",
+    ),
+    omitInputFieldsByDefault: parseStringArray(
+      generatorConfig.omitInputFieldsByDefault,
+      "omitInputFieldsByDefault",
+    ),
+    omitOutputFieldsByDefault: parseStringArray(
+      generatorConfig.omitOutputFieldsByDefault,
+      "omitOutputFieldsByDefault",
+    ),
+    formatGeneratedCode:
+      parseStringBoolean(generatorConfig.formatGeneratedCode) ??
+      parseStringEnum(
+        generatorConfig.formatGeneratedCode,
+        "formatGeneratedCode",
+        ["prettier", "tsc"] as const,
+      ),
+    emitIsAbstract: parseStringBoolean(generatorConfig.emitIsAbstract) ?? false,
     useFederation: parseStringBoolean(generatorConfig.useFederation),
   };
   const internalConfig: InternalGeneratorOptions = {

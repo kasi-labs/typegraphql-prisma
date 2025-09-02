@@ -3,14 +3,12 @@ import * as GraphQLScalars from "graphql-scalars";
 import { Prisma } from "../../../client";
 import { DecimalJSScalar } from "../../scalars";
 import { CreatorListRelationFilter } from "../inputs/CreatorListRelationFilter";
-import { CreatorRelationFilter } from "../inputs/CreatorRelationFilter";
+import { CreatorNullableRelationFilter } from "../inputs/CreatorNullableRelationFilter";
 import { IntFilter } from "../inputs/IntFilter";
 import { IntNullableFilter } from "../inputs/IntNullableFilter";
 import { StringFilter } from "../inputs/StringFilter";
 
-@TypeGraphQL.InputType("ProblemWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("ProblemWhereInput", {})
 export class ProblemWhereInput {
   @TypeGraphQL.Field(_type => [ProblemWhereInput], {
     nullable: true
@@ -37,18 +35,18 @@ export class ProblemWhereInput {
   })
   problemText?: StringFilter | undefined;
 
+  @TypeGraphQL.Field(_type => IntNullableFilter, {
+    nullable: true
+  })
+  creatorId?: IntNullableFilter | undefined;
+
   @TypeGraphQL.Field(_type => CreatorListRelationFilter, {
     nullable: true
   })
   likedBy?: CreatorListRelationFilter | undefined;
 
-  @TypeGraphQL.Field(_type => CreatorRelationFilter, {
+  @TypeGraphQL.Field(_type => CreatorNullableRelationFilter, {
     nullable: true
   })
-  creator?: CreatorRelationFilter | undefined;
-
-  @TypeGraphQL.Field(_type => IntNullableFilter, {
-    nullable: true
-  })
-  creatorId?: IntNullableFilter | undefined;
+  creator?: CreatorNullableRelationFilter | undefined;
 }

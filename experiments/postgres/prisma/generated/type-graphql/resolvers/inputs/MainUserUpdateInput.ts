@@ -6,9 +6,7 @@ import { PostUpdateManyWithoutAuthorNestedInput } from "../inputs/PostUpdateMany
 import { PostUpdateManyWithoutEditorNestedInput } from "../inputs/PostUpdateManyWithoutEditorNestedInput";
 import { Role } from "../../enums/Role";
 
-@TypeGraphQL.InputType("MainUserUpdateInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MainUserUpdateInput", {})
 export class MainUserUpdateInput {
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -29,17 +27,10 @@ export class MainUserUpdateInput {
   })
   amount?: number | undefined;
 
-  posts?: PostUpdateManyWithoutAuthorNestedInput | undefined;
-
   @TypeGraphQL.Field(_type => Role, {
     nullable: true
   })
   role?: "USER" | "ADMIN" | undefined;
-
-  @TypeGraphQL.Field(_type => PostUpdateManyWithoutEditorNestedInput, {
-    nullable: true
-  })
-  editorPosts?: PostUpdateManyWithoutEditorNestedInput | undefined;
 
   @TypeGraphQL.Field(_type => [TypeGraphQL.Int], {
     nullable: true
@@ -50,6 +41,13 @@ export class MainUserUpdateInput {
     nullable: true
   })
   aliases?: string[] | undefined;
+
+  posts?: PostUpdateManyWithoutAuthorNestedInput | undefined;
+
+  @TypeGraphQL.Field(_type => PostUpdateManyWithoutEditorNestedInput, {
+    nullable: true
+  })
+  editorPosts?: PostUpdateManyWithoutEditorNestedInput | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
