@@ -63,6 +63,7 @@ const sidebars = {
         "advanced/hiding-field",
         "advanced/adding-fields",
         "advanced/custom-operations",
+        "advanced/federation",
         "advanced/emit-blocks",
         "advanced/additional-decorators",
         "advanced/simple-inputs",

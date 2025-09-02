@@ -86,3 +86,18 @@ This way you can save even up to 33% of the generation process time.
 :::info
 When the generator is configured to emit transpiled code, the generated JS code is always formatted by TypeScript compiler and you can't change it to Prettier or disable the formatting by the `formatGeneratedCode` option.
 :::
+
+## GraphQL Federation support
+
+You can enable Apollo GraphQL Federation support by setting the `useFederation` option:
+
+```prisma {3}
+generator typegraphql {
+  provider      = "typegraphql-prisma"
+  useFederation = true
+}
+```
+
+This will automatically add `@key` directives to your generated TypeGraphQL entity types based on the ID fields in your Prisma models, making them compatible with Apollo Federation.
+
+For detailed information about federation support, see the [GraphQL Federation guide](../advanced/federation.md).
