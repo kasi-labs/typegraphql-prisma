@@ -340,6 +340,7 @@ import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
 import { NestedIntFilter } from \\"../inputs/NestedIntFilter\\";
 import { NestedJsonFilter } from \\"../inputs/NestedJsonFilter\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"JsonWithAggregatesFilter\\", {})
 export class JsonWithAggregatesFilter {
@@ -352,6 +353,11 @@ export class JsonWithAggregatesFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -1070,6 +1076,7 @@ exports[`inputs should properly generate input type classes for filtering json f
 import * as GraphQLScalars from \\"graphql-scalars\\";
 import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"JsonFilter\\", {})
 export class JsonFilter {
@@ -1082,6 +1089,11 @@ export class JsonFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -1148,6 +1160,7 @@ import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
 import { NestedIntFilter } from \\"../inputs/NestedIntFilter\\";
 import { NestedJsonFilter } from \\"../inputs/NestedJsonFilter\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"JsonWithAggregatesFilter\\", {})
 export class JsonWithAggregatesFilter {
@@ -1160,6 +1173,11 @@ export class JsonWithAggregatesFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -1239,6 +1257,7 @@ exports[`inputs should properly generate input type classes for filtering json f
 import * as GraphQLScalars from \\"graphql-scalars\\";
 import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"NestedJsonFilter\\", {})
 export class NestedJsonFilter {
@@ -1251,6 +1270,11 @@ export class NestedJsonFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -2465,6 +2489,7 @@ exports[`inputs should properly generate input type classes for filtering scalar
 import * as GraphQLScalars from \\"graphql-scalars\\";
 import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"JsonFilter\\", {})
 export class JsonFilter {
@@ -2477,6 +2502,11 @@ export class JsonFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
@@ -2715,6 +2745,7 @@ exports[`inputs should properly generate input type classes for filtering scalar
 import * as GraphQLScalars from \\"graphql-scalars\\";
 import { Prisma } from \\"../../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../../scalars\\";
+import { QueryMode } from \\"../../enums/QueryMode\\";
 
 @TypeGraphQL.InputType(\\"NestedJsonFilter\\", {})
 export class NestedJsonFilter {
@@ -2727,6 +2758,11 @@ export class NestedJsonFilter {
     nullable: true
   })
   path?: string[] | undefined;
+
+  @TypeGraphQL.Field(_type => QueryMode, {
+    nullable: true
+  })
+  mode?: \\"default\\" | \\"insensitive\\" | undefined;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: true
