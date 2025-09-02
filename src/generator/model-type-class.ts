@@ -20,6 +20,7 @@ import { modelsFolderName } from "./config";
 import { DMMF } from "./dmmf/types";
 import { DmmfDocument } from "./dmmf/dmmf-document";
 import { convertNewLines } from "./helpers";
+import { GeneratorOptions } from "./options";
 
 export default function generateObjectTypeClassFromModel(
   project: Project,
@@ -85,6 +86,7 @@ export default function generateObjectTypeClassFromModel(
               }),
             ],
           },
+          ...generateIDKeyDirective(model, dmmfDocument.options),
         ],
     properties: [
       ...model.fields.map<OptionalKind<PropertyDeclarationStructure>>(field => {
@@ -183,4 +185,19 @@ export default function generateObjectTypeClassFromModel(
       docs: [{ description: `\n${convertNewLines(model.docs)}` }],
     }),
   });
+}
+
+function generateIDKeyDirective(model: DMMF.Model, options: GeneratorOptions) {
+  if (options.useFederation !== true) return [];
+
+  const argumentFields = model.fields
+    .filter(field => field.isId)
+    .map(field => field.name)
+    .join(",");
+  return [
+    {
+      name: "TypeGraphQL.Directive",
+      arguments: [`\`@key(fields: "${argumentFields}")\``],
+    },
+  ];
 }
