@@ -1396,10 +1396,9 @@ describe("inputs", () => {
       const orderByRelevanceInputTSFile = await readGeneratedFile(
         "/resolvers/inputs/FirstModelOrderByRelevanceInput.ts",
       );
-      const orderByWithRelationAndSearchRelevanceInputTSFile =
-        await readGeneratedFile(
-          "/resolvers/inputs/FirstModelOrderByWithRelationAndSearchRelevanceInput.ts",
-        );
+      const orderByWithRelationInputTSFile = await readGeneratedFile(
+        "/resolvers/inputs/FirstModelOrderByWithRelationInput.ts",
+      );
       const nestedStringFilterTSFile = await readGeneratedFile(
         "/resolvers/inputs/NestedStringFilter.ts",
       );
@@ -1411,8 +1410,8 @@ describe("inputs", () => {
       expect(orderByRelevanceInputTSFile).toMatchSnapshot(
         "FirstModelOrderByRelevanceInput",
       );
-      expect(orderByWithRelationAndSearchRelevanceInputTSFile).toMatchSnapshot(
-        "FirstModelOrderByWithRelationAndSearchRelevanceInput",
+      expect(orderByWithRelationInputTSFile).toMatchSnapshot(
+        "FirstModelOrderByWithRelationInput",
       );
       expect(nestedStringFilterTSFile).toMatchSnapshot("NestedStringFilter");
       expect(stringFilterTSFile).toMatchSnapshot("StringFilter");
@@ -1420,42 +1419,39 @@ describe("inputs", () => {
     });
   });
 
-  describe("when `orderByNulls` preview feature is enabled", () => {
-    it("should properly generate input type classes with SortOrderInput type fields", async () => {
-      const schema = /* prisma */ `
-        model FirstModel {
-          idField             Int            @id @default(autoincrement())
-          uniqueStringField   String         @unique
-          optionalFloatField  Float?
-          secondModelsField   SecondModel[]
-        }
-        model SecondModel {
-          idField             Int          @id @default(autoincrement())
-          uniqueStringField   String       @unique
-          optionalFloatField  Float?
-          firstModelFieldId   Int
-          firstModelField     FirstModel   @relation(fields: [firstModelFieldId], references: [idField])
-        }
-      `;
+  it("should properly generate input type classes with SortOrderInput type fields", async () => {
+    const schema = /* prisma */ `
+      model FirstModel {
+        idField             Int            @id @default(autoincrement())
+        uniqueStringField   String         @unique
+        optionalFloatField  Float?
+        secondModelsField   SecondModel[]
+      }
+      model SecondModel {
+        idField             Int          @id @default(autoincrement())
+        uniqueStringField   String       @unique
+        optionalFloatField  Float?
+        firstModelFieldId   Int
+        firstModelField     FirstModel   @relation(fields: [firstModelFieldId], references: [idField])
+      }
+    `;
 
-      await generateCodeFromSchema(schema, {
-        outputDirPath,
-        previewFeatures: ["orderByNulls"],
-      });
-      const orderByWithAggregationInputTSFile = await readGeneratedFile(
-        "/resolvers/inputs/FirstModelOrderByWithAggregationInput.ts",
-      );
-      const sortOrderInputTSFile = await readGeneratedFile(
-        "/resolvers/inputs/SortOrderInput.ts",
-      );
-      const indexTSFile = await readGeneratedFile("/resolvers/inputs/index.ts");
-
-      expect(orderByWithAggregationInputTSFile).toMatchSnapshot(
-        "FirstModelOrderByWithAggregationInput",
-      );
-      expect(sortOrderInputTSFile).toMatchSnapshot("SortOrderInput");
-      expect(indexTSFile).toMatchSnapshot("index");
+    await generateCodeFromSchema(schema, {
+      outputDirPath,
     });
+    const orderByWithAggregationInputTSFile = await readGeneratedFile(
+      "/resolvers/inputs/FirstModelOrderByWithAggregationInput.ts",
+    );
+    const sortOrderInputTSFile = await readGeneratedFile(
+      "/resolvers/inputs/SortOrderInput.ts",
+    );
+    const indexTSFile = await readGeneratedFile("/resolvers/inputs/index.ts");
+
+    expect(orderByWithAggregationInputTSFile).toMatchSnapshot(
+      "FirstModelOrderByWithAggregationInput",
+    );
+    expect(sortOrderInputTSFile).toMatchSnapshot("SortOrderInput");
+    expect(indexTSFile).toMatchSnapshot("index");
   });
 
   describe("when useSimpleInputs config option is set to true", () => {
@@ -1591,64 +1587,85 @@ describe("inputs", () => {
     expect(indexTSFile).toMatchSnapshot("index");
   });
 
-  describe("when `extendedWhereUnique` preview feature is enabled", () => {
-    it("should properly generate input type classes with SortOrderInput type fields", async () => {
+  it("should properly generate input type classes with SortOrderInput type fields", async () => {
+    const schema = /* prisma */ `
+      model FirstModel {
+        idField             Int            @id @default(autoincrement())
+        uniqueStringField   String         @unique
+        optionalFloatField  Float?
+        secondModelsField   SecondModel[]
+      }
+      model SecondModel {
+        idField             Int          @id @default(autoincrement())
+        uniqueStringField   String       @unique
+        optionalFloatField  Float?
+        firstModelFieldId   Int
+        firstModelField     FirstModel   @relation(fields: [firstModelFieldId], references: [idField])
+      }
+    `;
+
+    await generateCodeFromSchema(schema, {
+      outputDirPath,
+    });
+    const firstModelWhereUniqueInputTSFile = await readGeneratedFile(
+      "/resolvers/inputs/FirstModelWhereUniqueInput.ts",
+    );
+    const firstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInputTSFile =
+      await readGeneratedFile(
+        "/resolvers/inputs/FirstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInput.ts",
+      );
+    const firstModelUpdateToOneWithWhereWithoutSecondModelsFieldInputTSFile =
+      await readGeneratedFile(
+        "/resolvers/inputs/FirstModelUpdateToOneWithWhereWithoutSecondModelsFieldInput.ts",
+      );
+    const secondModelUpsertWithWhereUniqueWithoutFirstModelFieldInputTSFile =
+      await readGeneratedFile(
+        "/resolvers/inputs/SecondModelUpsertWithWhereUniqueWithoutFirstModelFieldInput.ts",
+      );
+    const indexTSFile = await readGeneratedFile("/resolvers/inputs/index.ts");
+
+    expect(firstModelWhereUniqueInputTSFile).toMatchSnapshot(
+      "FirstModelWhereUniqueInput",
+    );
+    expect(
+      firstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInputTSFile,
+    ).toMatchSnapshot(
+      "FirstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInput",
+    );
+    expect(
+      firstModelUpdateToOneWithWhereWithoutSecondModelsFieldInputTSFile,
+    ).toMatchSnapshot(
+      "FirstModelUpdateToOneWithWhereWithoutSecondModelsFieldInput",
+    );
+    expect(
+      secondModelUpsertWithWhereUniqueWithoutFirstModelFieldInputTSFile,
+    ).toMatchSnapshot(
+      "SecondModelUpsertWithWhereUniqueWithoutFirstModelFieldInput",
+    );
+    expect(indexTSFile).toMatchSnapshot("index");
+  });
+
+  describe("when `emitIsAbstract` generator option is enabled", () => {
+    it("should properly generate input type class decorator options", async () => {
       const schema = /* prisma */ `
         model FirstModel {
           idField             Int            @id @default(autoincrement())
           uniqueStringField   String         @unique
           optionalFloatField  Float?
-          secondModelsField   SecondModel[]
-        }
-        model SecondModel {
-          idField             Int          @id @default(autoincrement())
-          uniqueStringField   String       @unique
-          optionalFloatField  Float?
-          firstModelFieldId   Int
-          firstModelField     FirstModel   @relation(fields: [firstModelFieldId], references: [idField])
         }
       `;
 
       await generateCodeFromSchema(schema, {
         outputDirPath,
-        previewFeatures: ["extendedWhereUnique"],
+        emitIsAbstract: true,
       });
       const firstModelWhereUniqueInputTSFile = await readGeneratedFile(
         "/resolvers/inputs/FirstModelWhereUniqueInput.ts",
       );
-      const firstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInputTSFile =
-        await readGeneratedFile(
-          "/resolvers/inputs/FirstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInput.ts",
-        );
-      const firstModelUpdateToOneWithWhereWithoutSecondModelsFieldInputTSFile =
-        await readGeneratedFile(
-          "/resolvers/inputs/FirstModelUpdateToOneWithWhereWithoutSecondModelsFieldInput.ts",
-        );
-      const secondModelUpsertWithWhereUniqueWithoutFirstModelFieldInputTSFile =
-        await readGeneratedFile(
-          "/resolvers/inputs/SecondModelUpsertWithWhereUniqueWithoutFirstModelFieldInput.ts",
-        );
-      const indexTSFile = await readGeneratedFile("/resolvers/inputs/index.ts");
 
       expect(firstModelWhereUniqueInputTSFile).toMatchSnapshot(
         "FirstModelWhereUniqueInput",
       );
-      expect(
-        firstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInputTSFile,
-      ).toMatchSnapshot(
-        "FirstModelUpdateOneRequiredWithoutSecondModelsFieldNestedInput",
-      );
-      expect(
-        firstModelUpdateToOneWithWhereWithoutSecondModelsFieldInputTSFile,
-      ).toMatchSnapshot(
-        "FirstModelUpdateToOneWithWhereWithoutSecondModelsFieldInput",
-      );
-      expect(
-        secondModelUpsertWithWhereUniqueWithoutFirstModelFieldInputTSFile,
-      ).toMatchSnapshot(
-        "SecondModelUpsertWithWhereUniqueWithoutFirstModelFieldInput",
-      );
-      expect(indexTSFile).toMatchSnapshot("index");
     });
   });
 });

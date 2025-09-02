@@ -11,10 +11,9 @@ import { JsonFilter } from "../inputs/JsonFilter";
 import { MainUserRelationFilter } from "../inputs/MainUserRelationFilter";
 import { StringFilter } from "../inputs/StringFilter";
 import { StringNullableFilter } from "../inputs/StringNullableFilter";
+import { UserNullableRelationFilter } from "../inputs/UserNullableRelationFilter";
 
-@TypeGraphQL.InputType("PostWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("PostWhereInput", {})
 export class PostWhereInput {
   @TypeGraphQL.Field(_type => [PostWhereInput], {
     nullable: true
@@ -61,20 +60,10 @@ export class PostWhereInput {
   })
   content?: StringNullableFilter | undefined;
 
-  @TypeGraphQL.Field(_type => MainUserRelationFilter, {
-    nullable: true
-  })
-  author?: MainUserRelationFilter | undefined;
-
   @TypeGraphQL.Field(_type => IntFilter, {
     nullable: true
   })
   authorId?: IntFilter | undefined;
-
-  @TypeGraphQL.Field(_type => MainUserRelationFilter, {
-    nullable: true
-  })
-  editor?: MainUserRelationFilter | undefined;
 
   @TypeGraphQL.Field(_type => IntNullableFilter, {
     nullable: true
@@ -90,4 +79,14 @@ export class PostWhereInput {
     nullable: true
   })
   metadata?: JsonFilter | undefined;
+
+  @TypeGraphQL.Field(_type => MainUserRelationFilter, {
+    nullable: true
+  })
+  author?: MainUserRelationFilter | undefined;
+
+  @TypeGraphQL.Field(_type => UserNullableRelationFilter, {
+    nullable: true
+  })
+  editor?: UserNullableRelationFilter | undefined;
 }

@@ -20,6 +20,7 @@ const actionResolversMap = {
   User: {
     aggregateUser: actionResolvers.AggregateUserResolver,
     createManyUser: actionResolvers.CreateManyUserResolver,
+    createManyAndReturnUser: actionResolvers.CreateManyAndReturnUserResolver,
     createOneUser: actionResolvers.CreateOneUserResolver,
     deleteManyUser: actionResolvers.DeleteManyUserResolver,
     deleteOneUser: actionResolvers.DeleteOneUserResolver,
@@ -36,6 +37,7 @@ const actionResolversMap = {
   Post: {
     aggregatePost: actionResolvers.AggregatePostResolver,
     createManyPost: actionResolvers.CreateManyPostResolver,
+    createManyAndReturnPost: actionResolvers.CreateManyAndReturnPostResolver,
     createOnePost: actionResolvers.CreateOnePostResolver,
     deleteManyPost: actionResolvers.DeleteManyPostResolver,
     deleteOnePost: actionResolvers.DeleteOnePostResolver,
@@ -51,12 +53,13 @@ const actionResolversMap = {
   }
 };
 const crudResolversInfo = {
-  User: [\\"aggregateUser\\", \\"createManyUser\\", \\"createOneUser\\", \\"deleteManyUser\\", \\"deleteOneUser\\", \\"findFirstUser\\", \\"findFirstUserOrThrow\\", \\"users\\", \\"user\\", \\"getUser\\", \\"groupByUser\\", \\"updateManyUser\\", \\"updateOneUser\\", \\"upsertOneUser\\"],
-  Post: [\\"aggregatePost\\", \\"createManyPost\\", \\"createOnePost\\", \\"deleteManyPost\\", \\"deleteOnePost\\", \\"findFirstPost\\", \\"findFirstPostOrThrow\\", \\"posts\\", \\"post\\", \\"getPost\\", \\"groupByPost\\", \\"updateManyPost\\", \\"updateOnePost\\", \\"upsertOnePost\\"]
+  User: [\\"aggregateUser\\", \\"createManyUser\\", \\"createManyAndReturnUser\\", \\"createOneUser\\", \\"deleteManyUser\\", \\"deleteOneUser\\", \\"findFirstUser\\", \\"findFirstUserOrThrow\\", \\"users\\", \\"user\\", \\"getUser\\", \\"groupByUser\\", \\"updateManyUser\\", \\"updateOneUser\\", \\"upsertOneUser\\"],
+  Post: [\\"aggregatePost\\", \\"createManyPost\\", \\"createManyAndReturnPost\\", \\"createOnePost\\", \\"deleteManyPost\\", \\"deleteOnePost\\", \\"findFirstPost\\", \\"findFirstPostOrThrow\\", \\"posts\\", \\"post\\", \\"getPost\\", \\"groupByPost\\", \\"updateManyPost\\", \\"updateOnePost\\", \\"upsertOnePost\\"]
 };
 const argsInfo = {
   AggregateUserArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\"],
   CreateManyUserArgs: [\\"data\\", \\"skipDuplicates\\"],
+  CreateManyAndReturnUserArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOneUserArgs: [\\"data\\"],
   DeleteManyUserArgs: [\\"where\\"],
   DeleteOneUserArgs: [\\"where\\"],
@@ -71,6 +74,7 @@ const argsInfo = {
   UpsertOneUserArgs: [\\"where\\", \\"create\\", \\"update\\"],
   AggregatePostArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\"],
   CreateManyPostArgs: [\\"data\\", \\"skipDuplicates\\"],
+  CreateManyAndReturnPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOnePostArgs: [\\"data\\"],
   DeleteManyPostArgs: [\\"where\\"],
   DeleteOnePostArgs: [\\"where\\"],
@@ -94,7 +98,11 @@ type ModelResolverActionNames<
 export type ResolverActionsConfig<
   TModel extends ResolverModelNames
 > = Partial<Record<ModelResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
-  & { _all: MethodDecorator[] };
+  & {
+    _all?: MethodDecorator[];
+    _query?: MethodDecorator[];
+    _mutation?: MethodDecorator[];
+  };
 
 export type ResolversEnhanceMap = {
   [TModel in ResolverModelNames]?: ResolverActionsConfig<TModel>;
@@ -103,22 +111,31 @@ export type ResolversEnhanceMap = {
 export function applyResolversEnhanceMap(
   resolversEnhanceMap: ResolversEnhanceMap,
 ) {
+  const mutationOperationPrefixes = [
+    \\"createOne\\", \\"createMany\\", \\"createManyAndReturn\\", \\"deleteOne\\", \\"updateOne\\", \\"deleteMany\\", \\"updateMany\\", \\"upsertOne\\"
+  ];
   for (const resolversEnhanceMapKey of Object.keys(resolversEnhanceMap)) {
     const modelName = resolversEnhanceMapKey as keyof typeof resolversEnhanceMap;
     const crudTarget = crudResolversMap[modelName].prototype;
     const resolverActionsConfig = resolversEnhanceMap[modelName]!;
     const actionResolversConfig = actionResolversMap[modelName];
-    const allActionsDecorators = resolverActionsConfig._all ?? [];
+    const allActionsDecorators = resolverActionsConfig._all;
     const resolverActionNames = crudResolversInfo[modelName as keyof typeof crudResolversInfo];
     for (const resolverActionName of resolverActionNames) {
       const maybeDecoratorsOrFn = resolverActionsConfig[
         resolverActionName as keyof typeof resolverActionsConfig
       ] as MethodDecorator[] | MethodDecoratorOverrideFn | undefined;
+      const isWriteOperation = mutationOperationPrefixes.some(prefix => resolverActionName.startsWith(prefix));
+      const operationKindDecorators = isWriteOperation ? resolverActionsConfig._mutation : resolverActionsConfig._query;
+      const mainDecorators = [
+        ...allActionsDecorators ?? [],
+        ...operationKindDecorators ?? [],
+      ]
       let decorators: MethodDecorator[];
       if (typeof maybeDecoratorsOrFn === \\"function\\") {
-        decorators = maybeDecoratorsOrFn(allActionsDecorators);
+        decorators = maybeDecoratorsOrFn(mainDecorators);
       } else {
-        decorators = [...allActionsDecorators, ...maybeDecoratorsOrFn ?? []];
+        decorators = [...mainDecorators, ...maybeDecoratorsOrFn ?? []];
       }
       const actionTarget = (actionResolversConfig[
         resolverActionName as keyof typeof actionResolversConfig
@@ -171,11 +188,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -262,7 +279,9 @@ const outputsInfo = {
   PostAvgAggregate: [\\"authorId\\"],
   PostSumAggregate: [\\"authorId\\"],
   PostMinAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
-  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"]
+  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
+  CreateManyAndReturnUser: [\\"id\\", \\"email\\"],
+  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -305,20 +324,20 @@ export function applyOutputTypesEnhanceMap(
 const inputsInfo = {
   UserWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\", \\"posts\\"],
   UserOrderByWithRelationInput: [\\"id\\", \\"email\\", \\"posts\\"],
-  UserWhereUniqueInput: [\\"id\\", \\"email\\"],
+  UserWhereUniqueInput: [\\"id\\", \\"email\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"posts\\"],
   UserOrderByWithAggregationInput: [\\"id\\", \\"email\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   UserScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\"],
-  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostWhereUniqueInput: [\\"uuid\\"],
+  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostWhereUniqueInput: [\\"uuid\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
   PostOrderByWithAggregationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   PostScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateInput: [\\"email\\", \\"posts\\"],
   UserUpdateInput: [\\"email\\", \\"posts\\"],
   UserCreateManyInput: [\\"id\\", \\"email\\"],
   UserUpdateManyMutationInput: [\\"email\\"],
-  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
-  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
+  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
+  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
   PostCreateManyInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostUpdateManyMutationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   IntFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
@@ -335,8 +354,9 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  UserRelationFilter: [\\"is\\", \\"isNot\\"],
   JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  UserRelationFilter: [\\"is\\", \\"isNot\\"],
+  SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostAvgOrderByAggregateInput: [\\"authorId\\"],
   PostMaxOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
@@ -377,7 +397,8 @@ const inputsInfo = {
   PostScalarWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateWithoutPostsInput: [\\"email\\"],
   UserCreateOrConnectWithoutPostsInput: [\\"where\\", \\"create\\"],
-  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\"],
+  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\", \\"where\\"],
+  UserUpdateToOneWithWhereWithoutPostsInput: [\\"where\\", \\"data\\"],
   UserUpdateWithoutPostsInput: [\\"email\\"],
   PostCreateManyAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostUpdateWithoutAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
@@ -452,6 +473,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -468,6 +490,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
     [crud]
       [Post]
         AggregatePostResolver.ts
+        CreateManyAndReturnPostResolver.ts
         CreateManyPostResolver.ts
         CreateOnePostResolver.ts
         DeleteManyPostResolver.ts
@@ -484,6 +507,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
         UpsertOnePostResolver.ts
         [args]
           AggregatePostArgs.ts
+          CreateManyAndReturnPostArgs.ts
           CreateManyPostArgs.ts
           CreateOnePostArgs.ts
           DeleteManyPostArgs.ts
@@ -500,6 +524,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
           index.ts
       [User]
         AggregateUserResolver.ts
+        CreateManyAndReturnUserResolver.ts
         CreateManyUserResolver.ts
         CreateOneUserResolver.ts
         DeleteManyUserResolver.ts
@@ -516,6 +541,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
         UserCrudResolver.ts
         [args]
           AggregateUserArgs.ts
+          CreateManyAndReturnUserArgs.ts
           CreateManyUserArgs.ts
           CreateOneUserArgs.ts
           DeleteManyUserArgs.ts
@@ -587,6 +613,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
       PostUpsertWithWhereUniqueWithoutAuthorInput.ts
       PostWhereInput.ts
       PostWhereUniqueInput.ts
+      SortOrderInput.ts
       StringFieldUpdateOperationsInput.ts
       StringFilter.ts
       StringNullableFilter.ts
@@ -609,6 +636,7 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
       UserUpdateInput.ts
       UserUpdateManyMutationInput.ts
       UserUpdateOneRequiredWithoutPostsNestedInput.ts
+      UserUpdateToOneWithWhereWithoutPostsInput.ts
       UserUpdateWithoutPostsInput.ts
       UserUpsertWithoutPostsInput.ts
       UserWhereInput.ts
@@ -618,6 +646,8 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
       AffectedRowsOutput.ts
       AggregatePost.ts
       AggregateUser.ts
+      CreateManyAndReturnPost.ts
+      CreateManyAndReturnUser.ts
       PostAvgAggregate.ts
       PostCountAggregate.ts
       PostGroupBy.ts
@@ -631,6 +661,9 @@ exports[`emitOnly generator option when both 'crudResolvers' and \`inputs\` is s
       UserMaxAggregate.ts
       UserMinAggregate.ts
       UserSumAggregate.ts
+      [args]
+        UserCountPostsArgs.ts
+        index.ts
       index.ts
   scalars.ts
 "
@@ -656,6 +689,7 @@ const actionResolversMap = {
   User: {
     aggregateUser: actionResolvers.AggregateUserResolver,
     createManyUser: actionResolvers.CreateManyUserResolver,
+    createManyAndReturnUser: actionResolvers.CreateManyAndReturnUserResolver,
     createOneUser: actionResolvers.CreateOneUserResolver,
     deleteManyUser: actionResolvers.DeleteManyUserResolver,
     deleteOneUser: actionResolvers.DeleteOneUserResolver,
@@ -672,6 +706,7 @@ const actionResolversMap = {
   Post: {
     aggregatePost: actionResolvers.AggregatePostResolver,
     createManyPost: actionResolvers.CreateManyPostResolver,
+    createManyAndReturnPost: actionResolvers.CreateManyAndReturnPostResolver,
     createOnePost: actionResolvers.CreateOnePostResolver,
     deleteManyPost: actionResolvers.DeleteManyPostResolver,
     deleteOnePost: actionResolvers.DeleteOnePostResolver,
@@ -687,12 +722,13 @@ const actionResolversMap = {
   }
 };
 const crudResolversInfo = {
-  User: [\\"aggregateUser\\", \\"createManyUser\\", \\"createOneUser\\", \\"deleteManyUser\\", \\"deleteOneUser\\", \\"findFirstUser\\", \\"findFirstUserOrThrow\\", \\"users\\", \\"user\\", \\"getUser\\", \\"groupByUser\\", \\"updateManyUser\\", \\"updateOneUser\\", \\"upsertOneUser\\"],
-  Post: [\\"aggregatePost\\", \\"createManyPost\\", \\"createOnePost\\", \\"deleteManyPost\\", \\"deleteOnePost\\", \\"findFirstPost\\", \\"findFirstPostOrThrow\\", \\"posts\\", \\"post\\", \\"getPost\\", \\"groupByPost\\", \\"updateManyPost\\", \\"updateOnePost\\", \\"upsertOnePost\\"]
+  User: [\\"aggregateUser\\", \\"createManyUser\\", \\"createManyAndReturnUser\\", \\"createOneUser\\", \\"deleteManyUser\\", \\"deleteOneUser\\", \\"findFirstUser\\", \\"findFirstUserOrThrow\\", \\"users\\", \\"user\\", \\"getUser\\", \\"groupByUser\\", \\"updateManyUser\\", \\"updateOneUser\\", \\"upsertOneUser\\"],
+  Post: [\\"aggregatePost\\", \\"createManyPost\\", \\"createManyAndReturnPost\\", \\"createOnePost\\", \\"deleteManyPost\\", \\"deleteOnePost\\", \\"findFirstPost\\", \\"findFirstPostOrThrow\\", \\"posts\\", \\"post\\", \\"getPost\\", \\"groupByPost\\", \\"updateManyPost\\", \\"updateOnePost\\", \\"upsertOnePost\\"]
 };
 const argsInfo = {
   AggregateUserArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\"],
   CreateManyUserArgs: [\\"data\\", \\"skipDuplicates\\"],
+  CreateManyAndReturnUserArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOneUserArgs: [\\"data\\"],
   DeleteManyUserArgs: [\\"where\\"],
   DeleteOneUserArgs: [\\"where\\"],
@@ -707,6 +743,7 @@ const argsInfo = {
   UpsertOneUserArgs: [\\"where\\", \\"create\\", \\"update\\"],
   AggregatePostArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\"],
   CreateManyPostArgs: [\\"data\\", \\"skipDuplicates\\"],
+  CreateManyAndReturnPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOnePostArgs: [\\"data\\"],
   DeleteManyPostArgs: [\\"where\\"],
   DeleteOnePostArgs: [\\"where\\"],
@@ -730,7 +767,11 @@ type ModelResolverActionNames<
 export type ResolverActionsConfig<
   TModel extends ResolverModelNames
 > = Partial<Record<ModelResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
-  & { _all: MethodDecorator[] };
+  & {
+    _all?: MethodDecorator[];
+    _query?: MethodDecorator[];
+    _mutation?: MethodDecorator[];
+  };
 
 export type ResolversEnhanceMap = {
   [TModel in ResolverModelNames]?: ResolverActionsConfig<TModel>;
@@ -739,22 +780,31 @@ export type ResolversEnhanceMap = {
 export function applyResolversEnhanceMap(
   resolversEnhanceMap: ResolversEnhanceMap,
 ) {
+  const mutationOperationPrefixes = [
+    \\"createOne\\", \\"createMany\\", \\"createManyAndReturn\\", \\"deleteOne\\", \\"updateOne\\", \\"deleteMany\\", \\"updateMany\\", \\"upsertOne\\"
+  ];
   for (const resolversEnhanceMapKey of Object.keys(resolversEnhanceMap)) {
     const modelName = resolversEnhanceMapKey as keyof typeof resolversEnhanceMap;
     const crudTarget = crudResolversMap[modelName].prototype;
     const resolverActionsConfig = resolversEnhanceMap[modelName]!;
     const actionResolversConfig = actionResolversMap[modelName];
-    const allActionsDecorators = resolverActionsConfig._all ?? [];
+    const allActionsDecorators = resolverActionsConfig._all;
     const resolverActionNames = crudResolversInfo[modelName as keyof typeof crudResolversInfo];
     for (const resolverActionName of resolverActionNames) {
       const maybeDecoratorsOrFn = resolverActionsConfig[
         resolverActionName as keyof typeof resolverActionsConfig
       ] as MethodDecorator[] | MethodDecoratorOverrideFn | undefined;
+      const isWriteOperation = mutationOperationPrefixes.some(prefix => resolverActionName.startsWith(prefix));
+      const operationKindDecorators = isWriteOperation ? resolverActionsConfig._mutation : resolverActionsConfig._query;
+      const mainDecorators = [
+        ...allActionsDecorators ?? [],
+        ...operationKindDecorators ?? [],
+      ]
       let decorators: MethodDecorator[];
       if (typeof maybeDecoratorsOrFn === \\"function\\") {
-        decorators = maybeDecoratorsOrFn(allActionsDecorators);
+        decorators = maybeDecoratorsOrFn(mainDecorators);
       } else {
-        decorators = [...allActionsDecorators, ...maybeDecoratorsOrFn ?? []];
+        decorators = [...mainDecorators, ...maybeDecoratorsOrFn ?? []];
       }
       const actionTarget = (actionResolversConfig[
         resolverActionName as keyof typeof actionResolversConfig
@@ -807,11 +857,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -898,7 +948,9 @@ const outputsInfo = {
   PostAvgAggregate: [\\"authorId\\"],
   PostSumAggregate: [\\"authorId\\"],
   PostMinAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
-  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"]
+  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
+  CreateManyAndReturnUser: [\\"id\\", \\"email\\"],
+  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -941,20 +993,20 @@ export function applyOutputTypesEnhanceMap(
 const inputsInfo = {
   UserWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\", \\"posts\\"],
   UserOrderByWithRelationInput: [\\"id\\", \\"email\\", \\"posts\\"],
-  UserWhereUniqueInput: [\\"id\\", \\"email\\"],
+  UserWhereUniqueInput: [\\"id\\", \\"email\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"posts\\"],
   UserOrderByWithAggregationInput: [\\"id\\", \\"email\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   UserScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\"],
-  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostWhereUniqueInput: [\\"uuid\\"],
+  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostWhereUniqueInput: [\\"uuid\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
   PostOrderByWithAggregationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   PostScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateInput: [\\"email\\", \\"posts\\"],
   UserUpdateInput: [\\"email\\", \\"posts\\"],
   UserCreateManyInput: [\\"id\\", \\"email\\"],
   UserUpdateManyMutationInput: [\\"email\\"],
-  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
-  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
+  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
+  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
   PostCreateManyInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostUpdateManyMutationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   IntFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
@@ -971,8 +1023,9 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  UserRelationFilter: [\\"is\\", \\"isNot\\"],
   JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  UserRelationFilter: [\\"is\\", \\"isNot\\"],
+  SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostAvgOrderByAggregateInput: [\\"authorId\\"],
   PostMaxOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
@@ -1013,7 +1066,8 @@ const inputsInfo = {
   PostScalarWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateWithoutPostsInput: [\\"email\\"],
   UserCreateOrConnectWithoutPostsInput: [\\"where\\", \\"create\\"],
-  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\"],
+  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\", \\"where\\"],
+  UserUpdateToOneWithWhereWithoutPostsInput: [\\"where\\", \\"data\\"],
   UserUpdateWithoutPostsInput: [\\"email\\"],
   PostCreateManyAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostUpdateWithoutAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
@@ -1088,6 +1142,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -1104,6 +1159,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
     [crud]
       [Post]
         AggregatePostResolver.ts
+        CreateManyAndReturnPostResolver.ts
         CreateManyPostResolver.ts
         CreateOnePostResolver.ts
         DeleteManyPostResolver.ts
@@ -1120,6 +1176,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
         UpsertOnePostResolver.ts
         [args]
           AggregatePostArgs.ts
+          CreateManyAndReturnPostArgs.ts
           CreateManyPostArgs.ts
           CreateOnePostArgs.ts
           DeleteManyPostArgs.ts
@@ -1136,6 +1193,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
           index.ts
       [User]
         AggregateUserResolver.ts
+        CreateManyAndReturnUserResolver.ts
         CreateManyUserResolver.ts
         CreateOneUserResolver.ts
         DeleteManyUserResolver.ts
@@ -1152,6 +1210,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
         UserCrudResolver.ts
         [args]
           AggregateUserArgs.ts
+          CreateManyAndReturnUserArgs.ts
           CreateManyUserArgs.ts
           CreateOneUserArgs.ts
           DeleteManyUserArgs.ts
@@ -1223,6 +1282,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
       PostUpsertWithWhereUniqueWithoutAuthorInput.ts
       PostWhereInput.ts
       PostWhereUniqueInput.ts
+      SortOrderInput.ts
       StringFieldUpdateOperationsInput.ts
       StringFilter.ts
       StringNullableFilter.ts
@@ -1245,6 +1305,7 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
       UserUpdateInput.ts
       UserUpdateManyMutationInput.ts
       UserUpdateOneRequiredWithoutPostsNestedInput.ts
+      UserUpdateToOneWithWhereWithoutPostsInput.ts
       UserUpdateWithoutPostsInput.ts
       UserUpsertWithoutPostsInput.ts
       UserWhereInput.ts
@@ -1254,6 +1315,8 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
       AffectedRowsOutput.ts
       AggregatePost.ts
       AggregateUser.ts
+      CreateManyAndReturnPost.ts
+      CreateManyAndReturnUser.ts
       PostAvgAggregate.ts
       PostCountAggregate.ts
       PostGroupBy.ts
@@ -1267,6 +1330,9 @@ exports[`emitOnly generator option when only 'crudResolvers' is set should gener
       UserMaxAggregate.ts
       UserMinAggregate.ts
       UserSumAggregate.ts
+      [args]
+        UserCountPostsArgs.ts
+        index.ts
       index.ts
   scalars.ts
 "
@@ -1294,6 +1360,7 @@ exports[`emitOnly generator option when only 'enums' is set should generate prop
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -1316,11 +1383,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -1354,20 +1421,20 @@ function applyTypeClassEnhanceConfig<
 const inputsInfo = {
   UserWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\", \\"posts\\"],
   UserOrderByWithRelationInput: [\\"id\\", \\"email\\", \\"posts\\"],
-  UserWhereUniqueInput: [\\"id\\", \\"email\\"],
+  UserWhereUniqueInput: [\\"id\\", \\"email\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"posts\\"],
   UserOrderByWithAggregationInput: [\\"id\\", \\"email\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   UserScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\"],
-  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostWhereUniqueInput: [\\"uuid\\"],
+  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostWhereUniqueInput: [\\"uuid\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
   PostOrderByWithAggregationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   PostScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateInput: [\\"email\\", \\"posts\\"],
   UserUpdateInput: [\\"email\\", \\"posts\\"],
   UserCreateManyInput: [\\"id\\", \\"email\\"],
   UserUpdateManyMutationInput: [\\"email\\"],
-  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
-  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
+  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
+  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
   PostCreateManyInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostUpdateManyMutationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   IntFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
@@ -1384,8 +1451,9 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  UserRelationFilter: [\\"is\\", \\"isNot\\"],
   JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  UserRelationFilter: [\\"is\\", \\"isNot\\"],
+  SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostAvgOrderByAggregateInput: [\\"authorId\\"],
   PostMaxOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
@@ -1426,7 +1494,8 @@ const inputsInfo = {
   PostScalarWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateWithoutPostsInput: [\\"email\\"],
   UserCreateOrConnectWithoutPostsInput: [\\"where\\", \\"create\\"],
-  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\"],
+  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\", \\"where\\"],
+  UserUpdateToOneWithWhereWithoutPostsInput: [\\"where\\", \\"data\\"],
   UserUpdateWithoutPostsInput: [\\"email\\"],
   PostCreateManyAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostUpdateWithoutAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
@@ -1489,6 +1558,7 @@ exports[`emitOnly generator option when only 'inputs' is set should generate pro
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -1551,6 +1621,7 @@ exports[`emitOnly generator option when only 'inputs' is set should generate pro
       PostUpsertWithWhereUniqueWithoutAuthorInput.ts
       PostWhereInput.ts
       PostWhereUniqueInput.ts
+      SortOrderInput.ts
       StringFieldUpdateOperationsInput.ts
       StringFilter.ts
       StringNullableFilter.ts
@@ -1573,6 +1644,7 @@ exports[`emitOnly generator option when only 'inputs' is set should generate pro
       UserUpdateInput.ts
       UserUpdateManyMutationInput.ts
       UserUpdateOneRequiredWithoutPostsNestedInput.ts
+      UserUpdateToOneWithWhereWithoutPostsInput.ts
       UserUpdateWithoutPostsInput.ts
       UserUpsertWithoutPostsInput.ts
       UserWhereInput.ts
@@ -1589,9 +1661,7 @@ import { Prisma } from \\"../../../helpers/prisma-client-mock\\";
 import { DecimalJSScalar } from \\"../scalars\\";
 import { Post } from \\"../models/Post\\";
 
-@TypeGraphQL.ObjectType(\\"User\\", {
-  isAbstract: true
-})
+@TypeGraphQL.ObjectType(\\"User\\", {})
 export class User {
   @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
     nullable: false
@@ -1618,11 +1688,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -1713,6 +1783,7 @@ exports[`emitOnly generator option when only 'models' is set should generate mod
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -1739,11 +1810,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -1790,7 +1861,9 @@ const outputsInfo = {
   PostAvgAggregate: [\\"authorId\\"],
   PostSumAggregate: [\\"authorId\\"],
   PostMinAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
-  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"]
+  PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
+  CreateManyAndReturnUser: [\\"id\\", \\"email\\"],
+  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -1850,6 +1923,7 @@ exports[`emitOnly generator option when only 'outputs' is set should generate pr
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -1863,6 +1937,8 @@ exports[`emitOnly generator option when only 'outputs' is set should generate pr
       AffectedRowsOutput.ts
       AggregatePost.ts
       AggregateUser.ts
+      CreateManyAndReturnPost.ts
+      CreateManyAndReturnUser.ts
       PostAvgAggregate.ts
       PostCountAggregate.ts
       PostGroupBy.ts
@@ -1876,6 +1952,9 @@ exports[`emitOnly generator option when only 'outputs' is set should generate pr
       UserMaxAggregate.ts
       UserMinAggregate.ts
       UserSumAggregate.ts
+      [args]
+        UserCountPostsArgs.ts
+        index.ts
       index.ts
   scalars.ts
 "
@@ -1907,7 +1986,7 @@ type RelationResolverActionNames<
 
 export type RelationResolverActionsConfig<TModel extends RelationResolverModelNames>
   = Partial<Record<RelationResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
-  & { \\"_all\\": MethodDecorator[] };
+  & { _all?: MethodDecorator[] };
 
 export type RelationResolversEnhanceMap = {
   [TModel in RelationResolverModelNames]?: RelationResolverActionsConfig<TModel>;
@@ -1942,11 +2021,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
-type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
 
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | \\"_all\\", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -2020,20 +2099,20 @@ export function applyModelsEnhanceMap(modelsEnhanceMap: ModelsEnhanceMap) {
 const inputsInfo = {
   UserWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\", \\"posts\\"],
   UserOrderByWithRelationInput: [\\"id\\", \\"email\\", \\"posts\\"],
-  UserWhereUniqueInput: [\\"id\\", \\"email\\"],
+  UserWhereUniqueInput: [\\"id\\", \\"email\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"posts\\"],
   UserOrderByWithAggregationInput: [\\"id\\", \\"email\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   UserScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"id\\", \\"email\\"],
-  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"authorId\\", \\"metadata\\"],
-  PostWhereUniqueInput: [\\"uuid\\"],
+  PostWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostOrderByWithRelationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  PostWhereUniqueInput: [\\"uuid\\", \\"AND\\", \\"OR\\", \\"NOT\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
   PostOrderByWithAggregationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"_count\\", \\"_avg\\", \\"_max\\", \\"_min\\", \\"_sum\\"],
   PostScalarWhereWithAggregatesInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateInput: [\\"email\\", \\"posts\\"],
   UserUpdateInput: [\\"email\\", \\"posts\\"],
   UserCreateManyInput: [\\"id\\", \\"email\\"],
   UserUpdateManyMutationInput: [\\"email\\"],
-  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
-  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"author\\", \\"metadata\\"],
+  PostCreateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
+  PostUpdateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"author\\"],
   PostCreateManyInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostUpdateManyMutationInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   IntFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
@@ -2050,8 +2129,9 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  UserRelationFilter: [\\"is\\", \\"isNot\\"],
   JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  UserRelationFilter: [\\"is\\", \\"isNot\\"],
+  SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostAvgOrderByAggregateInput: [\\"authorId\\"],
   PostMaxOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
@@ -2092,7 +2172,8 @@ const inputsInfo = {
   PostScalarWhereInput: [\\"AND\\", \\"OR\\", \\"NOT\\", \\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   UserCreateWithoutPostsInput: [\\"email\\"],
   UserCreateOrConnectWithoutPostsInput: [\\"where\\", \\"create\\"],
-  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\"],
+  UserUpsertWithoutPostsInput: [\\"update\\", \\"create\\", \\"where\\"],
+  UserUpdateToOneWithWhereWithoutPostsInput: [\\"where\\", \\"data\\"],
   UserUpdateWithoutPostsInput: [\\"email\\"],
   PostCreateManyAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostUpdateWithoutAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
@@ -2166,6 +2247,7 @@ exports[`emitOnly generator option when only 'relationResolvers' is set should g
   [enums]
     JsonNullValueFilter.ts
     JsonNullValueInput.ts
+    NullsOrder.ts
     PostScalarFieldEnum.ts
     QueryMode.ts
     SortOrder.ts
@@ -2232,6 +2314,7 @@ exports[`emitOnly generator option when only 'relationResolvers' is set should g
       PostUpsertWithWhereUniqueWithoutAuthorInput.ts
       PostWhereInput.ts
       PostWhereUniqueInput.ts
+      SortOrderInput.ts
       StringFieldUpdateOperationsInput.ts
       StringFilter.ts
       StringNullableFilter.ts
@@ -2254,6 +2337,7 @@ exports[`emitOnly generator option when only 'relationResolvers' is set should g
       UserUpdateInput.ts
       UserUpdateManyMutationInput.ts
       UserUpdateOneRequiredWithoutPostsNestedInput.ts
+      UserUpdateToOneWithWhereWithoutPostsInput.ts
       UserUpdateWithoutPostsInput.ts
       UserUpsertWithoutPostsInput.ts
       UserWhereInput.ts

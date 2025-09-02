@@ -1,6 +1,7 @@
 import * as TypeGraphQL from "type-graphql";
 import type { GraphQLResolveInfo } from "graphql";
 import { AggregateEquipmentArgs } from "./args/AggregateEquipmentArgs";
+import { CreateManyAndReturnEquipmentArgs } from "./args/CreateManyAndReturnEquipmentArgs";
 import { CreateManyEquipmentArgs } from "./args/CreateManyEquipmentArgs";
 import { CreateOneEquipmentArgs } from "./args/CreateOneEquipmentArgs";
 import { DeleteManyEquipmentArgs } from "./args/DeleteManyEquipmentArgs";
@@ -18,6 +19,7 @@ import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldI
 import { Equipment } from "../../../models/Equipment";
 import { AffectedRowsOutput } from "../../outputs/AffectedRowsOutput";
 import { AggregateEquipment } from "../../outputs/AggregateEquipment";
+import { CreateManyAndReturnEquipment } from "../../outputs/CreateManyAndReturnEquipment";
 import { EquipmentGroupBy } from "../../outputs/EquipmentGroupBy";
 
 @TypeGraphQL.Resolver(_of => Equipment)
@@ -25,7 +27,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => AggregateEquipment, {
     nullable: false
   })
-  async aggregateEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => AggregateEquipmentArgs) args: AggregateEquipmentArgs): Promise<AggregateEquipment> {
+  async aggregateEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => AggregateEquipmentArgs) args: AggregateEquipmentArgs): Promise<AggregateEquipment> {
     return getPrismaFromContext(ctx).equipment.aggregate({
       ...args,
       ...transformInfoIntoPrismaArgs(info),
@@ -35,9 +37,20 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async createManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => CreateManyEquipmentArgs) args: CreateManyEquipmentArgs): Promise<AffectedRowsOutput> {
+  async createManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateManyEquipmentArgs) args: CreateManyEquipmentArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.createMany({
+      ...args,
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+    });
+  }
+
+  @TypeGraphQL.Mutation(_returns => [CreateManyAndReturnEquipment], {
+    nullable: false
+  })
+  async createManyAndReturnEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateManyAndReturnEquipmentArgs) args: CreateManyAndReturnEquipmentArgs): Promise<CreateManyAndReturnEquipment[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info);
+    return getPrismaFromContext(ctx).equipment.createManyAndReturn({
       ...args,
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });
@@ -46,7 +59,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => Equipment, {
     nullable: false
   })
-  async createOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => CreateOneEquipmentArgs) args: CreateOneEquipmentArgs): Promise<Equipment> {
+  async createOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateOneEquipmentArgs) args: CreateOneEquipmentArgs): Promise<Equipment> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.create({
       ...args,
@@ -57,7 +70,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async deleteManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => DeleteManyEquipmentArgs) args: DeleteManyEquipmentArgs): Promise<AffectedRowsOutput> {
+  async deleteManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => DeleteManyEquipmentArgs) args: DeleteManyEquipmentArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.deleteMany({
       ...args,
@@ -68,7 +81,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => Equipment, {
     nullable: true
   })
-  async deleteOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => DeleteOneEquipmentArgs) args: DeleteOneEquipmentArgs): Promise<Equipment | null> {
+  async deleteOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => DeleteOneEquipmentArgs) args: DeleteOneEquipmentArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.delete({
       ...args,
@@ -79,7 +92,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => Equipment, {
     nullable: true
   })
-  async findFirstEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindFirstEquipmentArgs) args: FindFirstEquipmentArgs): Promise<Equipment | null> {
+  async findFirstEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindFirstEquipmentArgs) args: FindFirstEquipmentArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.findFirst({
       ...args,
@@ -90,7 +103,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => Equipment, {
     nullable: true
   })
-  async findFirstEquipmentOrThrow(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindFirstEquipmentOrThrowArgs) args: FindFirstEquipmentOrThrowArgs): Promise<Equipment | null> {
+  async findFirstEquipmentOrThrow(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindFirstEquipmentOrThrowArgs) args: FindFirstEquipmentOrThrowArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.findFirstOrThrow({
       ...args,
@@ -101,7 +114,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => [Equipment], {
     nullable: false
   })
-  async equipments(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindManyEquipmentArgs) args: FindManyEquipmentArgs): Promise<Equipment[]> {
+  async equipments(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindManyEquipmentArgs) args: FindManyEquipmentArgs): Promise<Equipment[]> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.findMany({
       ...args,
@@ -112,7 +125,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => Equipment, {
     nullable: true
   })
-  async equipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindUniqueEquipmentArgs) args: FindUniqueEquipmentArgs): Promise<Equipment | null> {
+  async equipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindUniqueEquipmentArgs) args: FindUniqueEquipmentArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.findUnique({
       ...args,
@@ -123,7 +136,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => Equipment, {
     nullable: true
   })
-  async getEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindUniqueEquipmentOrThrowArgs) args: FindUniqueEquipmentOrThrowArgs): Promise<Equipment | null> {
+  async getEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindUniqueEquipmentOrThrowArgs) args: FindUniqueEquipmentOrThrowArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.findUniqueOrThrow({
       ...args,
@@ -134,7 +147,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Query(_returns => [EquipmentGroupBy], {
     nullable: false
   })
-  async groupByEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => GroupByEquipmentArgs) args: GroupByEquipmentArgs): Promise<EquipmentGroupBy[]> {
+  async groupByEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => GroupByEquipmentArgs) args: GroupByEquipmentArgs): Promise<EquipmentGroupBy[]> {
     const { _count, _avg, _sum, _min, _max } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.groupBy({
       ...args,
@@ -147,7 +160,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async updateManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpdateManyEquipmentArgs) args: UpdateManyEquipmentArgs): Promise<AffectedRowsOutput> {
+  async updateManyEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpdateManyEquipmentArgs) args: UpdateManyEquipmentArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.updateMany({
       ...args,
@@ -158,7 +171,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => Equipment, {
     nullable: true
   })
-  async updateOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpdateOneEquipmentArgs) args: UpdateOneEquipmentArgs): Promise<Equipment | null> {
+  async updateOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpdateOneEquipmentArgs) args: UpdateOneEquipmentArgs): Promise<Equipment | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.update({
       ...args,
@@ -169,7 +182,7 @@ export class EquipmentCrudResolver {
   @TypeGraphQL.Mutation(_returns => Equipment, {
     nullable: false
   })
-  async upsertOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpsertOneEquipmentArgs) args: UpsertOneEquipmentArgs): Promise<Equipment> {
+  async upsertOneEquipment(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpsertOneEquipmentArgs) args: UpsertOneEquipmentArgs): Promise<Equipment> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).equipment.upsert({
       ...args,

@@ -12,6 +12,10 @@ export interface ExternalGeneratorOptions {
   customPrismaImportPath?: string;
   contextPrismaKey?: string;
   useSimpleInputs?: boolean;
+  omitInputFieldsByDefault?: string[];
+  omitOutputFieldsByDefault?: string[];
+  formatGeneratedCode?: boolean | "prettier" | "tsc";
+  emitIsAbstract?: boolean;
   useFederation?: boolean;
 }
 

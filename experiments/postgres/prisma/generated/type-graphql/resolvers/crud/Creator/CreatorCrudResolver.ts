@@ -1,6 +1,7 @@
 import * as TypeGraphQL from "type-graphql";
 import type { GraphQLResolveInfo } from "graphql";
 import { AggregateCreatorArgs } from "./args/AggregateCreatorArgs";
+import { CreateManyAndReturnCreatorArgs } from "./args/CreateManyAndReturnCreatorArgs";
 import { CreateManyCreatorArgs } from "./args/CreateManyCreatorArgs";
 import { CreateOneCreatorArgs } from "./args/CreateOneCreatorArgs";
 import { DeleteManyCreatorArgs } from "./args/DeleteManyCreatorArgs";
@@ -18,6 +19,7 @@ import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldI
 import { Creator } from "../../../models/Creator";
 import { AffectedRowsOutput } from "../../outputs/AffectedRowsOutput";
 import { AggregateCreator } from "../../outputs/AggregateCreator";
+import { CreateManyAndReturnCreator } from "../../outputs/CreateManyAndReturnCreator";
 import { CreatorGroupBy } from "../../outputs/CreatorGroupBy";
 
 @TypeGraphQL.Resolver(_of => Creator)
@@ -25,7 +27,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => AggregateCreator, {
     nullable: false
   })
-  async aggregateCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => AggregateCreatorArgs) args: AggregateCreatorArgs): Promise<AggregateCreator> {
+  async aggregateCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => AggregateCreatorArgs) args: AggregateCreatorArgs): Promise<AggregateCreator> {
     return getPrismaFromContext(ctx).creator.aggregate({
       ...args,
       ...transformInfoIntoPrismaArgs(info),
@@ -35,9 +37,20 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async createManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => CreateManyCreatorArgs) args: CreateManyCreatorArgs): Promise<AffectedRowsOutput> {
+  async createManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateManyCreatorArgs) args: CreateManyCreatorArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.createMany({
+      ...args,
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+    });
+  }
+
+  @TypeGraphQL.Mutation(_returns => [CreateManyAndReturnCreator], {
+    nullable: false
+  })
+  async createManyAndReturnCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateManyAndReturnCreatorArgs) args: CreateManyAndReturnCreatorArgs): Promise<CreateManyAndReturnCreator[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info);
+    return getPrismaFromContext(ctx).creator.createManyAndReturn({
       ...args,
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });
@@ -46,7 +59,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => Creator, {
     nullable: false
   })
-  async createOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => CreateOneCreatorArgs) args: CreateOneCreatorArgs): Promise<Creator> {
+  async createOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => CreateOneCreatorArgs) args: CreateOneCreatorArgs): Promise<Creator> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.create({
       ...args,
@@ -57,7 +70,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async deleteManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => DeleteManyCreatorArgs) args: DeleteManyCreatorArgs): Promise<AffectedRowsOutput> {
+  async deleteManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => DeleteManyCreatorArgs) args: DeleteManyCreatorArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.deleteMany({
       ...args,
@@ -68,7 +81,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => Creator, {
     nullable: true
   })
-  async deleteOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => DeleteOneCreatorArgs) args: DeleteOneCreatorArgs): Promise<Creator | null> {
+  async deleteOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => DeleteOneCreatorArgs) args: DeleteOneCreatorArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.delete({
       ...args,
@@ -79,7 +92,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => Creator, {
     nullable: true
   })
-  async findFirstCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindFirstCreatorArgs) args: FindFirstCreatorArgs): Promise<Creator | null> {
+  async findFirstCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindFirstCreatorArgs) args: FindFirstCreatorArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.findFirst({
       ...args,
@@ -90,7 +103,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => Creator, {
     nullable: true
   })
-  async findFirstCreatorOrThrow(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindFirstCreatorOrThrowArgs) args: FindFirstCreatorOrThrowArgs): Promise<Creator | null> {
+  async findFirstCreatorOrThrow(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindFirstCreatorOrThrowArgs) args: FindFirstCreatorOrThrowArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.findFirstOrThrow({
       ...args,
@@ -101,7 +114,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => [Creator], {
     nullable: false
   })
-  async creators(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindManyCreatorArgs) args: FindManyCreatorArgs): Promise<Creator[]> {
+  async creators(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindManyCreatorArgs) args: FindManyCreatorArgs): Promise<Creator[]> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.findMany({
       ...args,
@@ -112,7 +125,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => Creator, {
     nullable: true
   })
-  async creator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindUniqueCreatorArgs) args: FindUniqueCreatorArgs): Promise<Creator | null> {
+  async creator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindUniqueCreatorArgs) args: FindUniqueCreatorArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.findUnique({
       ...args,
@@ -123,7 +136,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => Creator, {
     nullable: true
   })
-  async getCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => FindUniqueCreatorOrThrowArgs) args: FindUniqueCreatorOrThrowArgs): Promise<Creator | null> {
+  async getCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => FindUniqueCreatorOrThrowArgs) args: FindUniqueCreatorOrThrowArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.findUniqueOrThrow({
       ...args,
@@ -134,7 +147,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Query(_returns => [CreatorGroupBy], {
     nullable: false
   })
-  async groupByCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => GroupByCreatorArgs) args: GroupByCreatorArgs): Promise<CreatorGroupBy[]> {
+  async groupByCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => GroupByCreatorArgs) args: GroupByCreatorArgs): Promise<CreatorGroupBy[]> {
     const { _count, _avg, _sum, _min, _max } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.groupBy({
       ...args,
@@ -147,7 +160,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => AffectedRowsOutput, {
     nullable: false
   })
-  async updateManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpdateManyCreatorArgs) args: UpdateManyCreatorArgs): Promise<AffectedRowsOutput> {
+  async updateManyCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpdateManyCreatorArgs) args: UpdateManyCreatorArgs): Promise<AffectedRowsOutput> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.updateMany({
       ...args,
@@ -158,7 +171,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => Creator, {
     nullable: true
   })
-  async updateOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpdateOneCreatorArgs) args: UpdateOneCreatorArgs): Promise<Creator | null> {
+  async updateOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpdateOneCreatorArgs) args: UpdateOneCreatorArgs): Promise<Creator | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.update({
       ...args,
@@ -169,7 +182,7 @@ export class CreatorCrudResolver {
   @TypeGraphQL.Mutation(_returns => Creator, {
     nullable: false
   })
-  async upsertOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_returns => UpsertOneCreatorArgs) args: UpsertOneCreatorArgs): Promise<Creator> {
+  async upsertOneCreator(@TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UpsertOneCreatorArgs) args: UpsertOneCreatorArgs): Promise<Creator> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx).creator.upsert({
       ...args,

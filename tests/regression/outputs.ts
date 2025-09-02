@@ -53,6 +53,9 @@ describe("outputs", () => {
     const sampleGroupByTSFile = await readGeneratedFile(
       "/resolvers/outputs/SampleGroupBy.ts",
     );
+    const createManyAndReturnSampleTSFile = await readGeneratedFile(
+      "/resolvers/outputs/CreateManyAndReturnSample.ts",
+    );
     const outputsIndexTSFile = await readGeneratedFile(
       "/resolvers/outputs/index.ts",
     );
@@ -65,6 +68,9 @@ describe("outputs", () => {
     expect(maxAggregateTSFile).toMatchSnapshot("SampleMaxAggregate");
     expect(affectedRowsOutputTSFile).toMatchSnapshot("AffectedRowsOutput");
     expect(sampleGroupByTSFile).toMatchSnapshot("SampleGroupBy");
+    expect(createManyAndReturnSampleTSFile).toMatchSnapshot(
+      "CreateManyAndReturnSample",
+    );
     expect(outputsIndexTSFile).toMatchSnapshot("outputs index");
   });
 
@@ -99,6 +105,9 @@ describe("outputs", () => {
     const maxAggregateTSFile = await readGeneratedFile(
       "/resolvers/outputs/ExampleMaxAggregate.ts",
     );
+    const createManyAndReturnExampleTSFile = await readGeneratedFile(
+      "/resolvers/outputs/CreateManyAndReturnExample.ts",
+    );
     const outputsIndexTSFile = await readGeneratedFile(
       "/resolvers/outputs/index.ts",
     );
@@ -109,6 +118,9 @@ describe("outputs", () => {
     expect(sumAggregateTSFile).toMatchSnapshot("ExampleSumAggregate");
     expect(minAggregateTSFile).toMatchSnapshot("ExampleMinAggregate");
     expect(maxAggregateTSFile).toMatchSnapshot("ExampleMaxAggregate");
+    expect(createManyAndReturnExampleTSFile).toMatchSnapshot(
+      "CreateManyAndReturnExample",
+    );
     expect(outputsIndexTSFile).toMatchSnapshot("outputs index");
   });
 
@@ -142,6 +154,9 @@ describe("outputs", () => {
     const maxAggregateTSFile = await readGeneratedFile(
       "/resolvers/outputs/ExampleMaxAggregate.ts",
     );
+    const createManyAndReturnTSFile = await readGeneratedFile(
+      "/resolvers/outputs/CreateManyAndReturnExample.ts",
+    );
     const outputsIndexTSFile = await readGeneratedFile(
       "/resolvers/outputs/index.ts",
     );
@@ -152,6 +167,9 @@ describe("outputs", () => {
     expect(sumAggregateTSFile).toMatchSnapshot("ExampleSumAggregate");
     expect(minAggregateTSFile).toMatchSnapshot("ExampleMinAggregate");
     expect(maxAggregateTSFile).toMatchSnapshot("ExampleMaxAggregate");
+    expect(createManyAndReturnTSFile).toMatchSnapshot(
+      "CreateManyAndReturnExample",
+    );
     expect(outputsIndexTSFile).toMatchSnapshot("outputs index");
   });
 
@@ -240,8 +258,39 @@ describe("outputs", () => {
     });
   });
 
-  describe("when filteredRelationCount preview feature is enabled", () => {
-    it("should properly generate count classes for relation fields with args", async () => {
+  it("should properly generate count classes for relation fields with args", async () => {
+    const schema = /* prisma */ `
+        model FirstModel {
+          idField            Int            @id @default(autoincrement())
+          uniqueStringField  String         @unique
+          floatField         Float
+          secondModelsField  SecondModel[]
+        }
+        model SecondModel {
+          idField            Int          @id @default(autoincrement())
+          uniqueStringField  String       @unique
+          floatField         Float
+          firstModelFieldId  Int
+          firstModelField    FirstModel   @relation(fields: [firstModelFieldId], references: [idField])
+        }
+      `;
+
+    await generateCodeFromSchema(schema, {
+      outputDirPath,
+    });
+    const firstModelCountTSFile = await readGeneratedFile(
+      "/resolvers/outputs/FirstModelCount.ts",
+    );
+    const outputsIndexTSFile = await readGeneratedFile(
+      "/resolvers/outputs/index.ts",
+    );
+
+    expect(firstModelCountTSFile).toMatchSnapshot("FirstModelCount");
+    expect(outputsIndexTSFile).toMatchSnapshot("outputs index");
+  });
+
+  describe("when `emitIsAbstract` generator option is enabled", () => {
+    it("should properly generate count object type class decorator options", async () => {
       const schema = /* prisma */ `
         model FirstModel {
           idField            Int            @id @default(autoincrement())
@@ -260,17 +309,13 @@ describe("outputs", () => {
 
       await generateCodeFromSchema(schema, {
         outputDirPath,
-        previewFeatures: ["filteredRelationCount"],
+        emitIsAbstract: true,
       });
       const firstModelCountTSFile = await readGeneratedFile(
         "/resolvers/outputs/FirstModelCount.ts",
       );
-      const outputsIndexTSFile = await readGeneratedFile(
-        "/resolvers/outputs/index.ts",
-      );
 
       expect(firstModelCountTSFile).toMatchSnapshot("FirstModelCount");
-      expect(outputsIndexTSFile).toMatchSnapshot("outputs index");
     });
   });
 });

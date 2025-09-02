@@ -1,6 +1,9 @@
-import { DMMF as PrismaDMMF } from "@prisma/client/runtime";
+import type { DMMF as PrismaDMMF } from "@prisma/generator-helper";
 import { Project, ScriptTarget, ModuleKind, CompilerOptions } from "ts-morph";
 import path from "path";
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
+const execa = promisify(exec);
 
 import { noop, toUnixPath } from "./helpers";
 import generateEnumFromDef from "./enum";
@@ -50,11 +53,12 @@ import { DMMF } from "./dmmf/types";
 import { getBlocksToEmit } from "./emit-block";
 
 const baseCompilerOptions: CompilerOptions = {
-  target: ScriptTarget.ES2019,
+  target: ScriptTarget.ES2021,
   module: ModuleKind.CommonJS,
   emitDecoratorMetadata: true,
   experimentalDecorators: true,
   esModuleInterop: true,
+  skipLibCheck: true,
 };
 
 export default async function generateCode(
@@ -76,6 +80,7 @@ export default async function generateCode(
       baseOptions.prismaClientPath.includes("node_modules")
         ? "@prisma/client"
         : undefined,
+    formatGeneratedCode: baseOptions.formatGeneratedCode ?? "tsc", // default for backward compatibility
   };
 
   const baseDirPath = options.outputDirPath;
@@ -527,9 +532,16 @@ export default async function generateCode(
   if (emitTranspiledCode) {
     await project.emit();
   } else {
-    for (const file of project.getSourceFiles()) {
-      file.formatText({ indentSize: 2 });
+    if (options.formatGeneratedCode === "tsc") {
+      for (const file of project.getSourceFiles()) {
+        file.formatText({ indentSize: 2 });
+      }
     }
     await project.save();
+    if (options.formatGeneratedCode === "prettier") {
+      await execa(
+        `npx prettier --write --ignore-path .prettierignore ${baseDirPath}`,
+      );
+    }
   }
 }

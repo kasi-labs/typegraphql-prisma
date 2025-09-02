@@ -8,6 +8,8 @@ import * as models from "./models";
 import * as outputTypes from "./resolvers/outputs";
 import * as inputTypes from "./resolvers/inputs";
 
+export type MethodDecoratorOverrideFn = (decorators: MethodDecorator[]) => MethodDecorator[];
+
 const crudResolversMap = {
   Post: crudResolvers.PostCrudResolver,
   Comment: crudResolvers.CommentCrudResolver,
@@ -121,7 +123,12 @@ type ModelResolverActionNames<
 
 export type ResolverActionsConfig<
   TModel extends ResolverModelNames
-> = Partial<Record<ModelResolverActionNames<TModel> | "_all", MethodDecorator[]>>;
+> = Partial<Record<ModelResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
+  & {
+    _all?: MethodDecorator[];
+    _query?: MethodDecorator[];
+    _mutation?: MethodDecorator[];
+  };
 
 export type ResolversEnhanceMap = {
   [TModel in ResolverModelNames]?: ResolverActionsConfig<TModel>;
@@ -130,29 +137,32 @@ export type ResolversEnhanceMap = {
 export function applyResolversEnhanceMap(
   resolversEnhanceMap: ResolversEnhanceMap,
 ) {
+  const mutationOperationPrefixes = [
+    "createOne", "createMany", "createManyAndReturn", "deleteOne", "updateOne", "deleteMany", "updateMany", "upsertOne"
+  ];
   for (const resolversEnhanceMapKey of Object.keys(resolversEnhanceMap)) {
     const modelName = resolversEnhanceMapKey as keyof typeof resolversEnhanceMap;
     const crudTarget = crudResolversMap[modelName].prototype;
     const resolverActionsConfig = resolversEnhanceMap[modelName]!;
     const actionResolversConfig = actionResolversMap[modelName];
-    if (resolverActionsConfig._all) {
-      const allActionsDecorators = resolverActionsConfig._all;
-      const resolverActionNames = crudResolversInfo[modelName as keyof typeof crudResolversInfo];
-      for (const resolverActionName of resolverActionNames) {
-        const actionTarget = (actionResolversConfig[
-          resolverActionName as keyof typeof actionResolversConfig
-        ] as Function).prototype;
-        tslib.__decorate(allActionsDecorators, crudTarget, resolverActionName, null);
-        tslib.__decorate(allActionsDecorators, actionTarget, resolverActionName, null);
-      }
-    }
-    const resolverActionsToApply = Object.keys(resolverActionsConfig).filter(
-      it => it !== "_all"
-    );
-    for (const resolverActionName of resolverActionsToApply) {
-      const decorators = resolverActionsConfig[
+    const allActionsDecorators = resolverActionsConfig._all;
+    const resolverActionNames = crudResolversInfo[modelName as keyof typeof crudResolversInfo];
+    for (const resolverActionName of resolverActionNames) {
+      const maybeDecoratorsOrFn = resolverActionsConfig[
         resolverActionName as keyof typeof resolverActionsConfig
-      ] as MethodDecorator[];
+      ] as MethodDecorator[] | MethodDecoratorOverrideFn | undefined;
+      const isWriteOperation = mutationOperationPrefixes.some(prefix => resolverActionName.startsWith(prefix));
+      const operationKindDecorators = isWriteOperation ? resolverActionsConfig._mutation : resolverActionsConfig._query;
+      const mainDecorators = [
+        ...allActionsDecorators ?? [],
+        ...operationKindDecorators ?? [],
+      ]
+      let decorators: MethodDecorator[];
+      if (typeof maybeDecoratorsOrFn === "function") {
+        decorators = maybeDecoratorsOrFn(mainDecorators);
+      } else {
+        decorators = [...mainDecorators, ...maybeDecoratorsOrFn ?? []];
+      }
       const actionTarget = (actionResolversConfig[
         resolverActionName as keyof typeof actionResolversConfig
       ] as Function).prototype;
@@ -217,7 +227,8 @@ type RelationResolverActionNames<
 > = keyof typeof relationResolversMap[TModel]["prototype"];
 
 export type RelationResolverActionsConfig<TModel extends RelationResolverModelNames>
-  = Partial<Record<RelationResolverActionNames<TModel> | "_all", MethodDecorator[]>>;
+  = Partial<Record<RelationResolverActionNames<TModel>, MethodDecorator[] | MethodDecoratorOverrideFn>>
+  & { _all?: MethodDecorator[] };
 
 export type RelationResolversEnhanceMap = {
   [TModel in RelationResolverModelNames]?: RelationResolverActionsConfig<TModel>;
@@ -230,20 +241,18 @@ export function applyRelationResolversEnhanceMap(
     const modelName = relationResolversEnhanceMapKey as keyof typeof relationResolversEnhanceMap;
     const relationResolverTarget = relationResolversMap[modelName].prototype;
     const relationResolverActionsConfig = relationResolversEnhanceMap[modelName]!;
-    if (relationResolverActionsConfig._all) {
-      const allActionsDecorators = relationResolverActionsConfig._all;
-      const relationResolverActionNames = relationResolversInfo[modelName as keyof typeof relationResolversInfo];
-      for (const relationResolverActionName of relationResolverActionNames) {
-        tslib.__decorate(allActionsDecorators, relationResolverTarget, relationResolverActionName, null);
-      }
-    }
-    const relationResolverActionsToApply = Object.keys(relationResolverActionsConfig).filter(
-      it => it !== "_all"
-    );
-    for (const relationResolverActionName of relationResolverActionsToApply) {
-      const decorators = relationResolverActionsConfig[
+    const allActionsDecorators = relationResolverActionsConfig._all ?? [];
+    const relationResolverActionNames = relationResolversInfo[modelName as keyof typeof relationResolversInfo];
+    for (const relationResolverActionName of relationResolverActionNames) {
+      const maybeDecoratorsOrFn = relationResolverActionsConfig[
         relationResolverActionName as keyof typeof relationResolverActionsConfig
-      ] as MethodDecorator[];
+      ] as MethodDecorator[] | MethodDecoratorOverrideFn | undefined;
+      let decorators: MethodDecorator[];
+      if (typeof maybeDecoratorsOrFn === "function") {
+        decorators = maybeDecoratorsOrFn(allActionsDecorators);
+      } else {
+        decorators = [...allActionsDecorators, ...maybeDecoratorsOrFn ?? []];
+      }
       tslib.__decorate(decorators, relationResolverTarget, relationResolverActionName, null);
     }
   }
@@ -254,9 +263,11 @@ type TypeConfig = {
   fields?: FieldsConfig;
 };
 
+export type PropertyDecoratorOverrideFn = (decorators: PropertyDecorator[]) => PropertyDecorator[];
+
 type FieldsConfig<TTypeKeys extends string = string> = Partial<
-  Record<TTypeKeys | "_all", PropertyDecorator[]>
->;
+  Record<TTypeKeys, PropertyDecorator[] | PropertyDecoratorOverrideFn>
+> & { _all?: PropertyDecorator[] };
 
 function applyTypeClassEnhanceConfig<
   TEnhanceConfig extends TypeConfig,
@@ -271,18 +282,18 @@ function applyTypeClassEnhanceConfig<
     tslib.__decorate(enhanceConfig.class, typeClass);
   }
   if (enhanceConfig.fields) {
-    if (enhanceConfig.fields._all) {
-      const allFieldsDecorators = enhanceConfig.fields._all;
-      for (const typeFieldName of typeFieldNames) {
-        tslib.__decorate(allFieldsDecorators, typePrototype, typeFieldName, void 0);
+    const allFieldsDecorators = enhanceConfig.fields._all ?? [];
+    for (const typeFieldName of typeFieldNames) {
+      const maybeDecoratorsOrFn = enhanceConfig.fields[
+        typeFieldName
+      ] as PropertyDecorator[] | PropertyDecoratorOverrideFn | undefined;
+      let decorators: PropertyDecorator[];
+      if (typeof maybeDecoratorsOrFn === "function") {
+        decorators = maybeDecoratorsOrFn(allFieldsDecorators);
+      } else {
+        decorators = [...allFieldsDecorators, ...maybeDecoratorsOrFn ?? []];
       }
-    }
-    const configFieldsToApply = Object.keys(enhanceConfig.fields).filter(
-      it => it !== "_all"
-    );
-    for (const typeFieldName of configFieldsToApply) {
-      const fieldDecorators = enhanceConfig.fields[typeFieldName]!;
-      tslib.__decorate(fieldDecorators, typePrototype, typeFieldName, void 0);
+      tslib.__decorate(decorators, typePrototype, typeFieldName, void 0);
     }
   }
 }
@@ -390,27 +401,27 @@ export function applyOutputTypesEnhanceMap(
 }
 
 const inputsInfo = {
-  PostWhereInput: ["AND", "OR", "NOT", "id", "slug", "title", "body", "comments", "author", "authorId"],
-  PostOrderByWithRelationInput: ["id", "slug", "title", "body", "comments", "author", "authorId"],
-  PostWhereUniqueInput: ["id", "slug"],
+  PostWhereInput: ["AND", "OR", "NOT", "id", "slug", "title", "body", "authorId", "comments", "author"],
+  PostOrderByWithRelationInput: ["id", "slug", "title", "body", "authorId", "comments", "author"],
+  PostWhereUniqueInput: ["id", "slug", "AND", "OR", "NOT", "title", "body", "authorId", "comments", "author"],
   PostOrderByWithAggregationInput: ["id", "slug", "title", "body", "authorId", "_count", "_max", "_min"],
   PostScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "slug", "title", "body", "authorId"],
-  CommentWhereInput: ["AND", "OR", "NOT", "id", "post", "postId", "comment"],
-  CommentOrderByWithRelationInput: ["id", "post", "postId", "comment"],
-  CommentWhereUniqueInput: ["id"],
+  CommentWhereInput: ["AND", "OR", "NOT", "id", "postId", "comment", "post"],
+  CommentOrderByWithRelationInput: ["id", "postId", "comment", "post"],
+  CommentWhereUniqueInput: ["id", "AND", "OR", "NOT", "postId", "comment", "post"],
   CommentOrderByWithAggregationInput: ["id", "postId", "comment", "_count", "_max", "_min"],
   CommentScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "postId", "comment"],
   UserWhereInput: ["AND", "OR", "NOT", "id", "email", "age", "address", "posts"],
   UserOrderByWithRelationInput: ["id", "email", "age", "address", "posts"],
-  UserWhereUniqueInput: ["id", "email"],
+  UserWhereUniqueInput: ["id", "email", "AND", "OR", "NOT", "age", "address", "posts"],
   UserOrderByWithAggregationInput: ["id", "email", "age", "_count", "_avg", "_max", "_min", "_sum"],
   UserScalarWhereWithAggregatesInput: ["AND", "OR", "NOT", "id", "email", "age"],
   PostCreateInput: ["id", "slug", "title", "body", "comments", "author"],
   PostUpdateInput: ["slug", "title", "body", "comments", "author"],
   PostCreateManyInput: ["id", "slug", "title", "body", "authorId"],
   PostUpdateManyMutationInput: ["slug", "title", "body"],
-  CommentCreateInput: ["id", "post", "comment"],
-  CommentUpdateInput: ["post", "comment"],
+  CommentCreateInput: ["id", "comment", "post"],
+  CommentUpdateInput: ["comment", "post"],
   CommentCreateManyInput: ["id", "postId", "comment"],
   CommentUpdateManyMutationInput: ["comment"],
   UserCreateInput: ["id", "email", "age", "address", "posts"],
@@ -470,11 +481,13 @@ const inputsInfo = {
   CommentUpdateWithWhereUniqueWithoutPostInput: ["where", "data"],
   CommentUpdateManyWithWhereWithoutPostInput: ["where", "data"],
   CommentScalarWhereInput: ["AND", "OR", "NOT", "id", "postId", "comment"],
-  UserUpsertWithoutPostsInput: ["update", "create"],
+  UserUpsertWithoutPostsInput: ["update", "create", "where"],
+  UserUpdateToOneWithWhereWithoutPostsInput: ["where", "data"],
   UserUpdateWithoutPostsInput: ["email", "age", "address"],
   PostCreateWithoutCommentsInput: ["id", "slug", "title", "body", "author"],
   PostCreateOrConnectWithoutCommentsInput: ["where", "create"],
-  PostUpsertWithoutCommentsInput: ["update", "create"],
+  PostUpsertWithoutCommentsInput: ["update", "create", "where"],
+  PostUpdateToOneWithWhereWithoutCommentsInput: ["where", "data"],
   PostUpdateWithoutCommentsInput: ["slug", "title", "body", "author"],
   PostCreateWithoutAuthorInput: ["id", "slug", "title", "body", "comments"],
   PostCreateOrConnectWithoutAuthorInput: ["where", "create"],

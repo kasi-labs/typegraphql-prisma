@@ -5,9 +5,7 @@ import { DecimalJSScalar } from "../../scalars";
 import { PostRelationFilter } from "../inputs/PostRelationFilter";
 import { StringFilter } from "../inputs/StringFilter";
 
-@TypeGraphQL.InputType("CommentWhereInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("CommentWhereInput", {})
 export class CommentWhereInput {
   @TypeGraphQL.Field(_type => [CommentWhereInput], {
     nullable: true
@@ -29,11 +27,6 @@ export class CommentWhereInput {
   })
   id?: StringFilter | undefined;
 
-  @TypeGraphQL.Field(_type => PostRelationFilter, {
-    nullable: true
-  })
-  post?: PostRelationFilter | undefined;
-
   @TypeGraphQL.Field(_type => StringFilter, {
     nullable: true
   })
@@ -43,4 +36,9 @@ export class CommentWhereInput {
     nullable: true
   })
   comment?: StringFilter | undefined;
+
+  @TypeGraphQL.Field(_type => PostRelationFilter, {
+    nullable: true
+  })
+  post?: PostRelationFilter | undefined;
 }

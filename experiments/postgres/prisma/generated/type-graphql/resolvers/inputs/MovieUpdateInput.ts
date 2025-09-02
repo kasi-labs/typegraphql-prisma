@@ -4,17 +4,15 @@ import { Prisma } from "../../../client";
 import { DecimalJSScalar } from "../../scalars";
 import { DirectorUpdateOneRequiredWithoutMoviesNestedInput } from "../inputs/DirectorUpdateOneRequiredWithoutMoviesNestedInput";
 
-@TypeGraphQL.InputType("MovieUpdateInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MovieUpdateInput", {})
 export class MovieUpdateInput {
-  @TypeGraphQL.Field(_type => DirectorUpdateOneRequiredWithoutMoviesNestedInput, {
-    nullable: true
-  })
-  director?: DirectorUpdateOneRequiredWithoutMoviesNestedInput | undefined;
-
   @TypeGraphQL.Field(_type => String, {
     nullable: true
   })
   title?: string | undefined;
+
+  @TypeGraphQL.Field(_type => DirectorUpdateOneRequiredWithoutMoviesNestedInput, {
+    nullable: true
+  })
+  director?: DirectorUpdateOneRequiredWithoutMoviesNestedInput | undefined;
 }

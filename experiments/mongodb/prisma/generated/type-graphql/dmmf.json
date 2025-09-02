@@ -319,6 +319,58 @@
         "uniqueFields": [],
         "uniqueIndexes": []
       }
+    ],
+    "indexes": [
+      {
+        "model": "Post",
+        "type": "id",
+        "isDefinedOnField": true,
+        "fields": [
+          {
+            "name": "id"
+          }
+        ]
+      },
+      {
+        "model": "Post",
+        "type": "unique",
+        "isDefinedOnField": true,
+        "fields": [
+          {
+            "name": "slug"
+          }
+        ]
+      },
+      {
+        "model": "Comment",
+        "type": "id",
+        "isDefinedOnField": true,
+        "fields": [
+          {
+            "name": "id"
+          }
+        ]
+      },
+      {
+        "model": "User",
+        "type": "id",
+        "isDefinedOnField": true,
+        "fields": [
+          {
+            "name": "id"
+          }
+        ]
+      },
+      {
+        "model": "User",
+        "type": "unique",
+        "isDefinedOnField": true,
+        "fields": [
+          {
+            "name": "email"
+          }
+        ]
+      }
     ]
   },
   "schema": {
@@ -458,6 +510,24 @@
               ]
             },
             {
+              "name": "authorId",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
               "name": "comments",
               "isRequired": false,
               "isNullable": false,
@@ -485,24 +555,6 @@
                   "type": "UserWhereInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
-              "name": "authorId",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "StringFilter",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                },
-                {
-                  "type": "String",
-                  "location": "scalar",
                   "isList": false
                 }
               ]
@@ -569,6 +621,19 @@
               ]
             },
             {
+              "name": "authorId",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "SortOrder",
+                  "namespace": "prisma",
+                  "location": "enumTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
               "name": "comments",
               "isRequired": false,
               "isNullable": false,
@@ -593,27 +658,21 @@
                   "isList": false
                 }
               ]
-            },
-            {
-              "name": "authorId",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "SortOrder",
-                  "namespace": "prisma",
-                  "location": "enumTypes",
-                  "isList": false
-                }
-              ]
             }
           ]
         },
         {
           "name": "PostWhereUniqueInput",
+          "meta": {
+            "source": "Post"
+          },
           "constraints": {
-            "maxNumFields": 1,
-            "minNumFields": 1
+            "maxNumFields": null,
+            "minNumFields": 1,
+            "fields": [
+              "id",
+              "slug"
+            ]
           },
           "fields": [
             {
@@ -636,6 +695,143 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "AND",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "OR",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "NOT",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "title",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "body",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "authorId",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "comments",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "CommentListRelationFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "author",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserRelationFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
                   "isList": false
                 }
               ]
@@ -988,25 +1184,6 @@
               ]
             },
             {
-              "name": "post",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "PostRelationFilter",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                },
-                {
-                  "type": "PostWhereInput",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
               "name": "postId",
               "isRequired": false,
               "isNullable": false,
@@ -1038,6 +1215,25 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "post",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostRelationFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
                   "isList": false
                 }
               ]
@@ -1065,19 +1261,6 @@
               ]
             },
             {
-              "name": "post",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "PostOrderByWithRelationInput",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
               "name": "postId",
               "isRequired": false,
               "isNullable": false,
@@ -1102,14 +1285,33 @@
                   "isList": false
                 }
               ]
+            },
+            {
+              "name": "post",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostOrderByWithRelationInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
             }
           ]
         },
         {
           "name": "CommentWhereUniqueInput",
+          "meta": {
+            "source": "Comment"
+          },
           "constraints": {
-            "maxNumFields": 1,
-            "minNumFields": 1
+            "maxNumFields": null,
+            "minNumFields": 1,
+            "fields": [
+              "id"
+            ]
           },
           "fields": [
             {
@@ -1120,6 +1322,112 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "AND",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "CommentWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "CommentWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "OR",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "CommentWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "NOT",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "CommentWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "CommentWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "postId",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "comment",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "StringFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "post",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostRelationFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
                   "isList": false
                 }
               ]
@@ -1560,9 +1868,16 @@
         },
         {
           "name": "UserWhereUniqueInput",
+          "meta": {
+            "source": "User"
+          },
           "constraints": {
-            "maxNumFields": 1,
-            "minNumFields": 1
+            "maxNumFields": null,
+            "minNumFields": 1,
+            "fields": [
+              "id",
+              "email"
+            ]
           },
           "fields": [
             {
@@ -1585,6 +1900,112 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "AND",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "OR",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "NOT",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": true
+                }
+              ]
+            },
+            {
+              "name": "age",
+              "isRequired": false,
+              "isNullable": true,
+              "inputTypes": [
+                {
+                  "type": "IntNullableFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "Int",
+                  "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "Null",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "address",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserAddressCompositeFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "UserAddressObjectEqualityInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "posts",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostListRelationFilter",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
                   "isList": false
                 }
               ]
@@ -1965,6 +2386,18 @@
               ]
             },
             {
+              "name": "authorId",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
               "name": "comments",
               "isRequired": false,
               "isNullable": false,
@@ -1973,18 +2406,6 @@
                   "type": "CommentUncheckedCreateNestedManyWithoutPostInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
-              "name": "authorId",
-              "isRequired": true,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "String",
-                  "location": "scalar",
                   "isList": false
                 }
               ]
@@ -2142,19 +2563,6 @@
               ]
             },
             {
-              "name": "comments",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "CommentUncheckedUpdateManyWithoutPostNestedInput",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
               "name": "authorId",
               "isRequired": false,
               "isNullable": false,
@@ -2166,6 +2574,19 @@
                 },
                 {
                   "type": "StringFieldUpdateOperationsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "comments",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "CommentUncheckedUpdateManyWithoutPostNestedInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
                   "isList": false
@@ -2407,6 +2828,18 @@
               ]
             },
             {
+              "name": "comment",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
               "name": "post",
               "isRequired": true,
               "isNullable": false,
@@ -2415,18 +2848,6 @@
                   "type": "PostCreateNestedOneWithoutCommentsInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
-              "name": "comment",
-              "isRequired": true,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "String",
-                  "location": "scalar",
                   "isList": false
                 }
               ]
@@ -2486,19 +2907,6 @@
           },
           "fields": [
             {
-              "name": "post",
-              "isRequired": false,
-              "isNullable": false,
-              "inputTypes": [
-                {
-                  "type": "PostUpdateOneRequiredWithoutCommentsNestedInput",
-                  "namespace": "prisma",
-                  "location": "inputObjectTypes",
-                  "isList": false
-                }
-              ]
-            },
-            {
               "name": "comment",
               "isRequired": false,
               "isNullable": false,
@@ -2510,6 +2918,19 @@
                 },
                 {
                   "type": "StringFieldUpdateOperationsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "post",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostUpdateOneRequiredWithoutCommentsNestedInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
                   "isList": false
@@ -3231,6 +3652,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3243,6 +3670,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3255,6 +3688,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3266,6 +3705,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3279,6 +3724,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3290,6 +3741,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3303,6 +3760,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3314,6 +3777,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3327,6 +3796,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3338,6 +3813,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3718,6 +4199,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3730,6 +4217,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3742,6 +4235,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3753,6 +4252,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3766,6 +4271,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3777,6 +4288,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3790,6 +4307,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3801,6 +4324,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -3814,6 +4343,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -3825,6 +4360,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -4098,6 +4639,12 @@
                   "isList": false
                 },
                 {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -4113,6 +4660,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 },
                 {
                   "type": "Null",
@@ -4132,6 +4685,12 @@
                   "isList": true
                 },
                 {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -4147,6 +4706,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -4158,6 +4723,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -4171,6 +4742,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -4182,6 +4759,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -4645,6 +5228,12 @@
                   "isList": false
                 },
                 {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -4660,6 +5249,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 },
                 {
                   "type": "Null",
@@ -4679,6 +5274,12 @@
                   "isList": true
                 },
                 {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -4694,6 +5295,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -4705,6 +5312,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -4718,6 +5331,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -4729,6 +5348,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -5387,6 +6012,12 @@
               "isNullable": false,
               "inputTypes": [
                 {
+                  "type": "UserUpdateToOneWithWhereWithoutPostsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
                   "type": "UserUpdateWithoutPostsInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
@@ -5750,6 +6381,12 @@
               "isRequired": false,
               "isNullable": false,
               "inputTypes": [
+                {
+                  "type": "PostUpdateToOneWithWhereWithoutCommentsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
                 {
                   "type": "PostUpdateWithoutCommentsInput",
                   "namespace": "prisma",
@@ -6605,6 +7242,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6617,6 +7260,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6629,6 +7278,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6640,6 +7295,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6653,6 +7314,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6664,6 +7331,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6677,6 +7350,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6688,6 +7367,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6701,6 +7386,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6712,6 +7403,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6752,6 +7449,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6764,6 +7467,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6776,6 +7485,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListStringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6787,6 +7502,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6800,6 +7521,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6811,6 +7538,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6824,6 +7557,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6835,6 +7574,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6848,6 +7593,12 @@
                   "type": "String",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6859,6 +7610,12 @@
                 {
                   "type": "String",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "StringFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6938,6 +7695,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6950,6 +7713,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6962,6 +7731,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6973,6 +7748,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -6986,6 +7767,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -6998,6 +7785,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7009,6 +7802,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7051,6 +7850,12 @@
                   "isList": false
                 },
                 {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7066,6 +7871,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 },
                 {
                   "type": "Null",
@@ -7085,6 +7896,12 @@
                   "isList": true
                 },
                 {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7100,6 +7917,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7111,6 +7934,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7124,6 +7953,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7135,6 +7970,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7316,6 +8157,12 @@
                   "isList": false
                 },
                 {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7331,6 +8178,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 },
                 {
                   "type": "Null",
@@ -7350,6 +8203,12 @@
                   "isList": true
                 },
                 {
+                  "type": "ListIntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7365,6 +8224,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7376,6 +8241,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7389,6 +8260,12 @@
                   "type": "Int",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7400,6 +8277,12 @@
                 {
                   "type": "Int",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "IntFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7524,6 +8407,12 @@
                   "isList": false
                 },
                 {
+                  "type": "FloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7539,6 +8428,12 @@
                   "type": "Float",
                   "location": "scalar",
                   "isList": true
+                },
+                {
+                  "type": "ListFloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 },
                 {
                   "type": "Null",
@@ -7558,6 +8453,12 @@
                   "isList": true
                 },
                 {
+                  "type": "ListFloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
+                },
+                {
                   "type": "Null",
                   "location": "scalar",
                   "isList": false
@@ -7573,6 +8474,12 @@
                   "type": "Float",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "FloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7584,6 +8491,12 @@
                 {
                   "type": "Float",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "FloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7597,6 +8510,12 @@
                   "type": "Float",
                   "location": "scalar",
                   "isList": false
+                },
+                {
+                  "type": "FloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
+                  "isList": false
                 }
               ]
             },
@@ -7608,6 +8527,12 @@
                 {
                   "type": "Float",
                   "location": "scalar",
+                  "isList": false
+                },
+                {
+                  "type": "FloatFieldRefInput",
+                  "namespace": "prisma",
+                  "location": "fieldRefTypes",
                   "isList": false
                 }
               ]
@@ -7768,6 +8693,12 @@
               "isRequired": true,
               "isNullable": false,
               "inputTypes": [
+                {
+                  "type": "CommentCreateManyPostInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
                 {
                   "type": "CommentCreateManyPostInput",
                   "namespace": "prisma",
@@ -8090,7 +9021,7 @@
                   "isList": false
                 },
                 {
-                  "type": "CommentUncheckedUpdateManyWithoutCommentsInput",
+                  "type": "CommentUncheckedUpdateManyWithoutPostInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
                   "isList": false
@@ -8255,6 +9186,60 @@
                 },
                 {
                   "type": "UserUncheckedCreateWithoutPostsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "UserUpdateToOneWithWhereWithoutPostsInput",
+          "constraints": {
+            "maxNumFields": null,
+            "minNumFields": null
+          },
+          "fields": [
+            {
+              "name": "where",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "data",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "UserUpdateWithoutPostsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "UserUncheckedUpdateWithoutPostsInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
                   "isList": false
@@ -8625,6 +9610,60 @@
                   "isList": false
                 }
               ]
+            },
+            {
+              "name": "where",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PostUpdateToOneWithWhereWithoutCommentsInput",
+          "constraints": {
+            "maxNumFields": null,
+            "minNumFields": null
+          },
+          "fields": [
+            {
+              "name": "where",
+              "isRequired": false,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostWhereInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "data",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "PostUpdateWithoutCommentsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostUncheckedUpdateWithoutCommentsInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
+                  "isList": false
+                }
+              ]
             }
           ]
         },
@@ -8982,6 +10021,12 @@
                   "type": "PostCreateManyAuthorInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
+                  "isList": false
+                },
+                {
+                  "type": "PostCreateManyAuthorInput",
+                  "namespace": "prisma",
+                  "location": "inputObjectTypes",
                   "isList": true
                 }
               ]
@@ -9189,7 +10234,7 @@
                   "isList": false
                 },
                 {
-                  "type": "PostUncheckedUpdateManyWithoutPostsInput",
+                  "type": "PostUncheckedUpdateManyWithoutAuthorInput",
                   "namespace": "prisma",
                   "location": "inputObjectTypes",
                   "isList": false
@@ -9439,7 +10484,7 @@
           ]
         },
         {
-          "name": "CommentUncheckedUpdateManyWithoutCommentsInput",
+          "name": "CommentUncheckedUpdateManyWithoutPostInput",
           "constraints": {
             "maxNumFields": null,
             "minNumFields": null
@@ -9675,7 +10720,7 @@
           ]
         },
         {
-          "name": "PostUncheckedUpdateManyWithoutPostsInput",
+          "name": "PostUncheckedUpdateManyWithoutAuthorInput",
           "constraints": {
             "maxNumFields": null,
             "minNumFields": null
@@ -9825,6 +10870,12 @@
                       "type": "PostScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "PostScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -9919,6 +10970,12 @@
                       "type": "PostScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "PostScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -10009,6 +11066,12 @@
                   "isRequired": false,
                   "isNullable": false,
                   "inputTypes": [
+                    {
+                      "type": "PostScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
+                      "isList": false
+                    },
                     {
                       "type": "PostScalarFieldEnum",
                       "namespace": "prisma",
@@ -10408,6 +11471,12 @@
                       "type": "CommentScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "CommentScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -10502,6 +11571,12 @@
                       "type": "CommentScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "CommentScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -10592,6 +11667,12 @@
                   "isRequired": false,
                   "isNullable": false,
                   "inputTypes": [
+                    {
+                      "type": "CommentScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
+                      "isList": false
+                    },
                     {
                       "type": "CommentScalarFieldEnum",
                       "namespace": "prisma",
@@ -10991,6 +12072,12 @@
                       "type": "UserScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "UserScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -11085,6 +12172,12 @@
                       "type": "UserScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "UserScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -11175,6 +12268,12 @@
                   "isRequired": false,
                   "isNullable": false,
                   "inputTypes": [
+                    {
+                      "type": "UserScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
+                      "isList": false
+                    },
                     {
                       "type": "UserScalarFieldEnum",
                       "namespace": "prisma",
@@ -11604,6 +12703,12 @@
                       "type": "PostCreateManyInput",
                       "namespace": "prisma",
                       "location": "inputObjectTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "PostCreateManyInput",
+                      "namespace": "prisma",
+                      "location": "inputObjectTypes",
                       "isList": true
                     }
                   ]
@@ -11861,6 +12966,12 @@
                       "type": "CommentCreateManyInput",
                       "namespace": "prisma",
                       "location": "inputObjectTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "CommentCreateManyInput",
+                      "namespace": "prisma",
+                      "location": "inputObjectTypes",
                       "isList": true
                     }
                   ]
@@ -12114,6 +13225,12 @@
                   "isRequired": true,
                   "isNullable": false,
                   "inputTypes": [
+                    {
+                      "type": "UserCreateManyInput",
+                      "namespace": "prisma",
+                      "location": "inputObjectTypes",
+                      "isList": false
+                    },
                     {
                       "type": "UserCreateManyInput",
                       "namespace": "prisma",
@@ -12696,7 +13813,21 @@
           "fields": [
             {
               "name": "comments",
-              "args": [],
+              "args": [
+                {
+                  "name": "where",
+                  "isRequired": false,
+                  "isNullable": false,
+                  "inputTypes": [
+                    {
+                      "type": "CommentWhereInput",
+                      "namespace": "prisma",
+                      "location": "inputObjectTypes",
+                      "isList": false
+                    }
+                  ]
+                }
+              ],
               "isNullable": false,
               "outputType": {
                 "type": "Int",
@@ -13001,7 +14132,21 @@
           "fields": [
             {
               "name": "posts",
-              "args": [],
+              "args": [
+                {
+                  "name": "where",
+                  "isRequired": false,
+                  "isNullable": false,
+                  "inputTypes": [
+                    {
+                      "type": "PostWhereInput",
+                      "namespace": "prisma",
+                      "location": "inputObjectTypes",
+                      "isList": false
+                    }
+                  ]
+                }
+              ],
               "isNullable": false,
               "outputType": {
                 "type": "Int",
@@ -13202,6 +14347,16 @@
               }
             },
             {
+              "name": "authorId",
+              "args": [],
+              "isNullable": false,
+              "outputType": {
+                "type": "String",
+                "location": "scalar",
+                "isList": false
+              }
+            },
+            {
               "name": "comments",
               "args": [
                 {
@@ -13282,6 +14437,12 @@
                       "type": "CommentScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "CommentScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -13303,16 +14464,6 @@
                 "type": "User",
                 "namespace": "model",
                 "location": "outputObjectTypes",
-                "isList": false
-              }
-            },
-            {
-              "name": "authorId",
-              "args": [],
-              "isNullable": false,
-              "outputType": {
-                "type": "String",
-                "location": "scalar",
                 "isList": false
               }
             },
@@ -13343,17 +14494,6 @@
               }
             },
             {
-              "name": "post",
-              "args": [],
-              "isNullable": false,
-              "outputType": {
-                "type": "Post",
-                "namespace": "model",
-                "location": "outputObjectTypes",
-                "isList": false
-              }
-            },
-            {
               "name": "postId",
               "args": [],
               "isNullable": false,
@@ -13370,6 +14510,17 @@
               "outputType": {
                 "type": "String",
                 "location": "scalar",
+                "isList": false
+              }
+            },
+            {
+              "name": "post",
+              "args": [],
+              "isNullable": false,
+              "outputType": {
+                "type": "Post",
+                "namespace": "model",
+                "location": "outputObjectTypes",
                 "isList": false
               }
             }
@@ -13500,6 +14651,12 @@
                       "type": "PostScalarFieldEnum",
                       "namespace": "prisma",
                       "location": "enumTypes",
+                      "isList": false
+                    },
+                    {
+                      "type": "PostScalarFieldEnum",
+                      "namespace": "prisma",
+                      "location": "enumTypes",
                       "isList": true
                     }
                   ]
@@ -13566,14 +14723,6 @@
     "enumTypes": {
       "prisma": [
         {
-          "name": "CommentScalarFieldEnum",
-          "values": [
-            "id",
-            "postId",
-            "comment"
-          ]
-        },
-        {
           "name": "PostScalarFieldEnum",
           "values": [
             "id",
@@ -13584,10 +14733,19 @@
           ]
         },
         {
-          "name": "QueryMode",
+          "name": "CommentScalarFieldEnum",
           "values": [
-            "default",
-            "insensitive"
+            "id",
+            "postId",
+            "comment"
+          ]
+        },
+        {
+          "name": "UserScalarFieldEnum",
+          "values": [
+            "id",
+            "email",
+            "age"
           ]
         },
         {
@@ -13598,16 +14756,234 @@
           ]
         },
         {
-          "name": "UserScalarFieldEnum",
+          "name": "QueryMode",
           "values": [
-            "id",
-            "email",
-            "age"
+            "default",
+            "insensitive"
           ]
         }
       ]
     },
-    "fieldRefTypes": {}
+    "fieldRefTypes": {
+      "prisma": [
+        {
+          "name": "StringFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "String",
+              "location": "scalar",
+              "isList": false
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ListStringFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "String",
+              "location": "scalar",
+              "isList": true
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "IntFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "Int",
+              "location": "scalar",
+              "isList": false
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ListIntFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "Int",
+              "location": "scalar",
+              "isList": true
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "FloatFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "Float",
+              "location": "scalar",
+              "isList": false
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ListFloatFieldRefInput",
+          "allowTypes": [
+            {
+              "type": "Float",
+              "location": "scalar",
+              "isList": true
+            }
+          ],
+          "fields": [
+            {
+              "name": "_ref",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            },
+            {
+              "name": "_container",
+              "isRequired": true,
+              "isNullable": false,
+              "inputTypes": [
+                {
+                  "type": "String",
+                  "location": "scalar",
+                  "isList": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   "mappings": {
     "modelOperations": [

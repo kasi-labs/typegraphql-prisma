@@ -7,9 +7,7 @@ import { MovieMovieCompoundIdCompoundUniqueInput } from "../inputs/MovieMovieCom
 import { MovieWhereInput } from "../inputs/MovieWhereInput";
 import { StringFilter } from "../inputs/StringFilter";
 
-@TypeGraphQL.InputType("MovieWhereUniqueInput", {
-  isAbstract: true
-})
+@TypeGraphQL.InputType("MovieWhereUniqueInput", {})
 export class MovieWhereUniqueInput {
   @TypeGraphQL.Field(_type => MovieMovieCompoundIdCompoundUniqueInput, {
     nullable: true
@@ -41,13 +39,13 @@ export class MovieWhereUniqueInput {
   })
   directorLastName?: StringFilter | undefined;
 
-  @TypeGraphQL.Field(_type => DirectorRelationFilter, {
-    nullable: true
-  })
-  director?: DirectorRelationFilter | undefined;
-
   @TypeGraphQL.Field(_type => StringFilter, {
     nullable: true
   })
   title?: StringFilter | undefined;
+
+  @TypeGraphQL.Field(_type => DirectorRelationFilter, {
+    nullable: true
+  })
+  director?: DirectorRelationFilter | undefined;
 }

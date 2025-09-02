@@ -1,0 +1,15 @@
+tsconfig*.json
+
+build
+lib
+package
+
+coverage
+tests/artifacts
+
+.docusaurus
+
+**/prisma/generated/**/*
+**/prisma/migrations/**/*
+prisma-client-mock.js
+prisma-client-mock.d.ts

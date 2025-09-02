@@ -7,7 +7,7 @@ Having installed all the deps and configured the Prisma generator, let's see the
 
 ## Showcase
 
-Let's assume you have this statements in your Prisma schema:
+Let's assume you have these statements in your Prisma schema:
 
 ```prisma title=prisma/schema.prisma
 enum UserKind {
@@ -38,7 +38,6 @@ TypeGraphQL.registerEnumType(UserKind, {
 
 ```ts title=generated/type-graphql/models/User.ts
 @TypeGraphQL.ObjectType({
-  isAbstract: true,
   description: undefined,
 })
 export class User {
@@ -109,6 +108,7 @@ However, it can also generate some resolvers which might be handy especially on 
 - findMany
 - create
 - createMany
+- createManyAndReturn
 - update
 - updateMany
 - delete
