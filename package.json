@@ -1,6 +1,6 @@
 {
-  "name": "@kasi-labs/typegraphql-prisma",
-  "version": "0.28.0",
+  "name": "typegraphql-prisma",
+  "version": "0.28.1",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
